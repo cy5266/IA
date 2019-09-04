@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource
 {
@@ -21,6 +22,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     var lowPriorityTasks: Array<String> = []
     var allTasks = [Objects]()
     var clickEditButton = 0
+    var highPriorityFirebaseRef: CollectionReference!
+    var namesArray: Array<String>!
   //  var isEditing: Bool {setEditing(true, animated: false)}
     
     @IBOutlet weak var tableView: UITableView! //https://stackoverflow.com/questions/33724190/ambiguous-reference-to-member-tableview
@@ -31,14 +34,17 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        return allTasks[section].sectionContents.count
+//        return allTasks[section].sectionContents.count
+        return 3
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
+//        print("create cell with: \(namesArray[indexPath.row])" )
         let cell = tableView.dequeueReusableCell(withIdentifier: "taskCell", for: indexPath) as! TaskCell
       
-        cell.labelOutlet.text = allTasks[indexPath.section].sectionContents[indexPath.row]
+//        cell.labelOutlet.text = allTasks[indexPath.section].sectionContents[indexPath.row]
+        cell.labelOutlet.text = namesArray[0]
 
         return cell
     }
@@ -136,18 +142,42 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        
+        namesArray = []
 
       // self.navigationItem.leftBarButtonItem = self.editButtonItem
-
+        highPriorityFirebaseRef = Firestore.firestore().collection("highPriorityTasks")
+       /*
+        highPriorityFirebaseRef.getDocuments()
+            { (docsSnapshot, err) in
+                if let err = err
+                {
+                    print("error \(err)")
+                }
+                else
+                {
+                    for document in docsSnapshot!.documents
+                    {
+                        self.namesArray.append(document["name"] as! String)
+                    }
+                }
+                
+                print(self.namesArray)
+                
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
+        }
+ */
+        
+            
         NotificationCenter.default.addObserver(self, selector: #selector(reloadList(_:)), name: NSNotification.Name("updateTableHighPriority"), object: nil) //creates the notification center named 'updateTable' and calls the function reloadList when it recieves the data
     
         NotificationCenter.default.addObserver(self, selector: #selector(reloadListforMedium(_:)), name: NSNotification.Name("updateTableMediumPriority"), object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(reloadListforLow(_:)), name: NSNotification.Name("updateTableLowPriority"), object: nil)
         
-
-        loadTask()
+//self.tableView.reloadData()
+loadTask()
  
     }
     
