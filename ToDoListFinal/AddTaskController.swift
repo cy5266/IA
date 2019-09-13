@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import Firebase
 
 class AddTaskController: UIViewController {
 
@@ -25,6 +25,7 @@ class AddTaskController: UIViewController {
     var unclickMediumPriority = 0
     var unclickLowPriority = 0
 
+    var highPriorityFirebaseRef2: CollectionReference!
     
     @IBOutlet weak var labelText: UILabel!
     
@@ -36,9 +37,13 @@ class AddTaskController: UIViewController {
             
             if clickedHighPriority
             {
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "updateTableHighPriority"), object: nil, userInfo: userInput) //uses notification and calls the notification center made in ViewController called 'updateTable' and sends in the dictionary userInput
         
-                returnToViewController()
+                highPriorityFirebaseRef2.addDocument(data: [
+                        "name": task])
+            
+                 returnToViewController()
+                
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "updateTableHighPriority"), object: nil, userInfo: userInput) //uses notification and calls the notification center made in ViewController called 'updateTable' and sends in the dictionary userInput
             }
             
             if clickedMediumPriority
@@ -119,6 +124,7 @@ class AddTaskController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        highPriorityFirebaseRef2 = Firestore.firestore().collection("highPriorityTasks")
     }
     
 

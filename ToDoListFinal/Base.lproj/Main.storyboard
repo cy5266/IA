@@ -10,6 +10,47 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
+        <!--Notes-->
+        <scene sceneID="fG4-hg-5lZ">
+            <objects>
+                <viewController id="37i-8r-TnL" customClass="NotesViewController" customModule="ToDoListFinal" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="aKd-Vm-DHI">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="gq2-lJ-87z">
+                                <rect key="frame" x="0.0" y="88" width="414" height="808"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="textColor" red="0.1289536546" green="0.060536311279999998" blue="0.57830715669999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="hoQ-bt-9ub"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Notes" id="dGu-Jl-1me">
+                        <barButtonItem key="rightBarButtonItem" style="plain" id="WDS-ga-mL3">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="cnX-jw-zUy">
+                                <rect key="frame" x="308" y="0.0" width="86" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="27"/>
+                                <state key="normal" title="Add"/>
+                                <connections>
+                                    <action selector="clickAdd:" destination="37i-8r-TnL" eventType="touchUpInside" id="cKE-JB-17v"/>
+                                </connections>
+                            </button>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="extraNotes" destination="gq2-lJ-87z" id="xxp-4d-Ghe"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="og9-Dh-ppV" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1066.6666666666667" y="-540.40178571428567"/>
+        </scene>
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
@@ -41,6 +82,7 @@
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="labelOutlet" destination="hgn-bF-Fg7" id="t6O-RA-vH6"/>
+                                            <segue destination="37i-8r-TnL" kind="show" id="NqF-V6-fea"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>

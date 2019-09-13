@@ -3,13 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		2D064E6EA3C1E5552E9B2436 /* Pods_ToDoListFinal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2D2CF9533B2328A75D536F5 /* Pods_ToDoListFinal.framework */; };
 		3737D113231C9D2600E91BA1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3737D112231C9D2600E91BA1 /* GoogleService-Info.plist */; };
 		379A7AFC22E56F5600177777 /* TaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379A7AFB22E56F5600177777 /* TaskCell.swift */; };
+		37D64277232A1C060023D310 /* NotesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D64276232A1C060023D310 /* NotesViewController.swift */; };
 		37F0486122E36DFB00C21162 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F0486022E36DFB00C21162 /* AppDelegate.swift */; };
 		37F0486322E36DFB00C21162 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F0486222E36DFB00C21162 /* ViewController.swift */; };
 		37F0486622E36DFB00C21162 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 37F0486422E36DFB00C21162 /* Main.storyboard */; };
@@ -44,6 +45,7 @@
 		19FC7630FBB750F55874D77F /* Pods_ToDoListFinalUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ToDoListFinalUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3737D112231C9D2600E91BA1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Desktop/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		379A7AFB22E56F5600177777 /* TaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCell.swift; sourceTree = "<group>"; };
+		37D64276232A1C060023D310 /* NotesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesViewController.swift; sourceTree = "<group>"; };
 		37F0485D22E36DFB00C21162 /* ToDoListFinal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToDoListFinal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		37F0486022E36DFB00C21162 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		37F0486222E36DFB00C21162 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -129,6 +131,7 @@
 				37F0486722E36DFD00C21162 /* Assets.xcassets */,
 				37F0486922E36DFD00C21162 /* LaunchScreen.storyboard */,
 				37F0486C22E36DFD00C21162 /* Info.plist */,
+				37D64276232A1C060023D310 /* NotesViewController.swift */,
 			);
 			path = ToDoListFinal;
 			sourceTree = "<group>";
@@ -171,7 +174,6 @@
 				5CB9700FFE760C16FD659739 /* Pods-ToDoListFinalUITests.debug.xcconfig */,
 				D4B96222AE76E59A6751379D /* Pods-ToDoListFinalUITests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -398,6 +400,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				379A7AFC22E56F5600177777 /* TaskCell.swift in Sources */,
+				37D64277232A1C060023D310 /* NotesViewController.swift in Sources */,
 				37F0486322E36DFB00C21162 /* ViewController.swift in Sources */,
 				37F0489322E374FD00C21162 /* AddTaskController.swift in Sources */,
 				37F0486122E36DFB00C21162 /* AppDelegate.swift in Sources */,
