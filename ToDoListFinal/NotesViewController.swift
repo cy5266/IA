@@ -19,22 +19,27 @@ class NotesViewController: UIViewController
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        notesFirebaseRef = Firestore.firestore().collection("notes")
-        getDocuments()
+      //  notesFirebaseRef = Firestore.firestore().collection("notes")
+      //  getDocuments()
     }
     
     @IBOutlet var extraNotes: UITextView!
+    
     
     @IBAction func clickAdd(_ sender: Any)
     {
         if let notes = extraNotes.text, !extraNotes.text.isEmpty
         {
-            notesFirebaseRef.addDocument(data: [
-                "note": notes])
-            
+            let newNotes: [String: String] = ["note" : notes]
+           // notesFirebaseRef.addDocument(data: ["note": notes])
+        
            // returnToViewController()
+           // getDocuments()
+            
+             NotificationCenter.default.post(name: NSNotification.Name(rawValue: "updateNotes"), object: nil, userInfo: newNotes)
         }
     }
+    
     
     func getDocuments()
     {

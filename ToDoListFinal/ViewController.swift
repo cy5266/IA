@@ -15,6 +15,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     {
         var sectionName: String
         var sectionContents: [String]!
+        
     }
  
     var highPriorityTasks: Array<String> = []
@@ -29,6 +30,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     var namesArray: Array<String>!
   //  var isEditing: Bool {setEditing(true, animated: false)}
+    
+    var notes: String = ""
     
     @IBOutlet weak var tableView: UITableView! //https://stackoverflow.com/questions/33724190/ambiguous-reference-to-member-tableview
     
@@ -151,15 +154,22 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         highPriorityFirebaseRef = Firestore.firestore().collection("highPriorityTasks")
         trial()
-        NotificationCenter.default.addObserver(self, selector: #selector(reloadList(_:)), name: NSNotification.Name("updateTableHighPriority"), object: nil) //creates the notification center named 'updateTable' and calls the function reloadList when it recieves the data
+      //  NotificationCenter.default.addObserver(self, selector: #selector(reloadList(_:)), name: NSNotification.Name("updateTableHighPriority"), object: nil) //creates the notification center named 'updateTable' and calls the function reloadList when it recieves the data
     
         NotificationCenter.default.addObserver(self, selector: #selector(reloadListforMedium(_:)), name: NSNotification.Name("updateTableMediumPriority"), object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(reloadListforLow(_:)), name: NSNotification.Name("updateTableLowPriority"), object: nil)
         
+         NotificationCenter.default.addObserver(self, selector: #selector(updateNotes(_:)), name: NSNotification.Name("updateNotes"), object: nil) //NOTES
+        
 self.tableView.reloadData()
 loadTask()
  
+    }
+    
+    @objc func updateNotes(_ notification: NSNotification)
+    {
+        
     }
     
     override func viewWillAppear(_ animated:Bool)

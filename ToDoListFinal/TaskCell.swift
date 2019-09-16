@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import Firebase
+
 class TaskCell: UITableViewCell {
     
     
@@ -14,7 +16,22 @@ class TaskCell: UITableViewCell {
     
     @IBOutlet weak var labelOutlet: UILabel!
     
-    let checkBoxFilledImage = UIImage(named: "checkBoxFILLED")
+    var name: String = ""
+    
+    var notes: String = ""
+    
+    var documentID: String = ""
+    
+    func update()
+    {
+    NotificationCenter.default.addObserver(self, selector: #selector(reloadList(_:)), name: NSNotification.Name("updateTableHighPriority"), object: nil)
+        
+    }
+    
+    func reloadList()
+    {
+        
+    }
     
     /*
     @IBAction func checkBoxAction(_ sender: Any)
