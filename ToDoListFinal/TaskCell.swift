@@ -21,16 +21,22 @@ class TaskCell: UITableViewCell {
     var notes: String = ""
     
     var documentID: String = ""
-    
+
     func update()
     {
     NotificationCenter.default.addObserver(self, selector: #selector(reloadList(_:)), name: NSNotification.Name("updateTableHighPriority"), object: nil)
-        
+        print("successful")
     }
     
-    func reloadList()
+    @objc func reloadList(_ notification: NSNotification)
     {
-        
+        if let info = notification.userInfo as NSDictionary? //sets a variable as the information from the dictionary recieved from the Notification
+        {
+            if let stringFromUser = info["task"] as? String //sets a variable as the information from the key 'task'
+            {
+               name = stringFromUser
+            }
+        }
     }
     
     /*

@@ -14,6 +14,10 @@ class NotesViewController: UIViewController
 {
 
     var notesFirebaseRef: CollectionReference!
+    var currentTask: TaskCell!
+    
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()

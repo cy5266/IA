@@ -14,13 +14,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     struct Objects //https://www.youtube.com/watch?v=zFMSovtqqUc
     {
         var sectionName: String
-        var sectionContents: [String]!
-        
+        var sectionContents: [TaskCell]!
     }
  
-    var highPriorityTasks: Array<String> = []
-    var mediumPriorityTasks: Array<String> = []
-    var lowPriorityTasks: Array<String> = []
+    var highPriorityTasks: Array<TaskCell> = []
+    var mediumPriorityTasks: Array<TaskCell> = []
+    var lowPriorityTasks: Array<TaskCell> = []
     
     var allTasks = [Objects]()
     
@@ -49,7 +48,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 //        print("create cell with: \(namesArray[indexPath.row])" )
         let cell = tableView.dequeueReusableCell(withIdentifier: "taskCell", for: indexPath) as! TaskCell
       
-       cell.labelOutlet.text = allTasks[indexPath.section].sectionContents[indexPath.row]
+       cell.labelOutlet.text = allTasks[indexPath.section].sectionContents[indexPath.row].name
 
         return cell
     }
@@ -154,7 +153,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         highPriorityFirebaseRef = Firestore.firestore().collection("highPriorityTasks")
         trial()
-      //  NotificationCenter.default.addObserver(self, selector: #selector(reloadList(_:)), name: NSNotification.Name("updateTableHighPriority"), object: nil) //creates the notification center named 'updateTable' and calls the function reloadList when it recieves the data
+   
+        NotificationCenter.default.addObserver(self, selector: #selector(reloadList(_:)), name: NSNotification.Name("updateTableHighPriority"), object: nil) //creates the notification center named 'updateTable' and calls the function reloadList when it recieves the data
     
         NotificationCenter.default.addObserver(self, selector: #selector(reloadListforMedium(_:)), name: NSNotification.Name("updateTableMediumPriority"), object: nil)
         
@@ -162,8 +162,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
          NotificationCenter.default.addObserver(self, selector: #selector(updateNotes(_:)), name: NSNotification.Name("updateNotes"), object: nil) //NOTES
         
-self.tableView.reloadData()
-loadTask()
+        self.tableView.reloadData()
+        loadTask()
  
     }
     
@@ -181,7 +181,8 @@ loadTask()
     
     func trial()
     {
-        highPriorityFirebaseRef.getDocuments(){
+        highPriorityFirebaseRef.getDocuments()
+            {
             (docsSnapshot, err) in
             if let err = err
             {
@@ -189,38 +190,28 @@ loadTask()
             }
             else
             {
+                self.highPriorityTasks.removeAll()
                 for document in docsSnapshot!.documents
                 {
-                    // for string in self.allTasks[0].sectionContents
-                    //{
-                    //if ((document["name"] as! String) != string)
-                    // {
-                    /*
-                     if (self.allTasks[0].sectionContents.count >= 1)
-                    {
-                        self.allTasks[0].sectionContents.insert((document["name"] as! String), at: self.allTasks[0].sectionContents[0])
-            
-                    }
-                    else
-                    {
- */
-                        self.allTasks[0].sectionContents.insert((document["name"] as! String), at: self.allTasks[0].sectionContents.count)
-                   // }
-                    //append(document["name"] as! String)
-                    //}
-                    // }
+                    let newTask = TaskCell()
+                    newTask.name = document["name"] as! String
+
+                    self.highPriorityTasks.append(newTask)
+                    self.loadTask()
+                    self.tableView.reloadData()
                 }
+                
             }
             
             DispatchQueue.main.async
                 {
-                    self.tableView.reloadData()
+            self.tableView.reloadData()
             }
         }
         // trialReload()
-        loadTask()
-        self.tableView.reloadData()
+        //self.tableView.reloadData()
     }
+ 
     
     @objc func reloadList(_ notification: NSNotification) //load data here
     {
@@ -233,35 +224,9 @@ loadTask()
             }
         }
         */
+        
         trial()
-//        highPriorityFirebaseRef.getDocuments(){
-//                (docsSnapshot, err) in
-//                if let err = err
-//                {
-//                    print("error \(err)")
-//                }
-//                else
-//                {
-//                    for document in docsSnapshot!.documents
-//                    {
-//                       // for string in self.allTasks[0].sectionContents
-//                        //{
-//                            //if ((document["name"] as! String) != string)
-//                           // {
-//                self.allTasks[0].sectionContents.append(document["name"] as! String)
-//                            //}
-//                       // }
-//                    }
-//                }
-//
-//                DispatchQueue.main.async
-//                    {
-//                        self.tableView.reloadData()
-//                }
-//        }
-//       // trialReload()
-//        loadTask()
-//        self.tableView.reloadData() //redisplays everything in the array
+
     }
     
     @objc func reloadListforMedium(_ notification: NSNotification)
@@ -270,7 +235,7 @@ loadTask()
         {
             if let stringFromUser = info["task"] as? String //sets a variable as the information from the key 'task'
             {
-                mediumPriorityTasks.append(stringFromUser) //adds the string from user into the array
+              //  mediumPriorityTasks.append(stringFromUser) //adds the string from user into the array
             }
         }
         loadTask()
@@ -283,7 +248,7 @@ loadTask()
         {
             if let stringFromUser = info["task"] as? String //sets a variable as the information from the key 'task'
             {
-                lowPriorityTasks.append(stringFromUser) //adds the string from user into the array
+               // lowPriorityTasks.append(stringFromUser) //adds the string from user into the array
             }
         }
         loadTask()
