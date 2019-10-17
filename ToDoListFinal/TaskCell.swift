@@ -21,11 +21,13 @@ class TaskCell: UITableViewCell {
     var notes: String = ""
     
     var documentID: String = ""
+    
 
     func update()
     {
     NotificationCenter.default.addObserver(self, selector: #selector(reloadList(_:)), name: NSNotification.Name("updateTableHighPriority"), object: nil)
-        print("successful")
+        //allIDS.append(documentID)
+     //   return all
     }
     
     @objc func reloadList(_ notification: NSNotification)

@@ -23,6 +23,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     var allTasks = [Objects]()
     
+    var shouldSegue: Bool = false
+    
+    var elementIndex: Int = 0
+    
+    var docID: String = ""
+    
     var clickEditButton = 0
     
     var highPriorityFirebaseRef: CollectionReference!
@@ -33,6 +39,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     var notes: String = ""
     
     @IBOutlet weak var tableView: UITableView! //https://stackoverflow.com/questions/33724190/ambiguous-reference-to-member-tableview
+    
     
     @IBOutlet var addButton: UIBarButtonItem!
     
@@ -52,16 +59,31 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
         return cell
     }
-   
-    /*
+    
+    
+    @IBAction func addButton(_ sender: Any)
+    {
+        self.performSegue(withIdentifier: "addTaskLink", sender: nil)
+    }
+    
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
+        shouldSegue = true
+        elementIndex = indexPath.row
+        //tell euisang later
+        docID = highPriorityTasks[elementIndex].documentID //using the element, find the TaskCell from array and access the field
+        
+        performSegue(withIdentifier: "notesLink", sender: Any?.self)
+        
+        shouldSegue = false
+       // if tableView.cellForRow(at: indexPath)?.accessoryType == UITableViewCell.AccessoryType.checkmark //https://www.youtube.com/watch?v=5MZ-WJuSdpg
+        
+    
 
-        if tableView.cellForRow(at: indexPath)?.accessoryType == UITableViewCell.AccessoryType.checkmark //https://www.youtube.com/watch?v=5MZ-WJuSdpg
-        {
-
-            tableView.cellForRow(at: indexPath)?.accessoryType = UITableViewCell.AccessoryType.none
-        }
+            //tableView.cellForRow(at: indexPath)?.accessoryType = UITableViewCell.AccessoryType.none
+    
+            /*
         else
         {
             if (clickEditButton % 2 == 0)
@@ -69,9 +91,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             tableView.cellForRow(at: indexPath)?.accessoryType = UITableViewCell.AccessoryType.checkmark
             }
         }
-        tableView.deselectRow(at: indexPath, animated: true) //https://stackoverflow.com/questions/33046573/why-do-my-uitableviewcells-turn-grey-when-i-tap-on-them/33046735
+        tableView.deselectRow(at: indexPath, animated: true) //https://stackoverflow*.com/questions/33046573/why-do-my-uitableviewcells-turn-grey-when-i-tap-on-them/33046735
+ */
     }
-    */
+        
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool
+    {
+        return shouldSegue
+    }
 
     func numberOfSections(in tableView: UITableView) -> Int
     {
@@ -83,7 +110,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         return allTasks[section].sectionName
     }
     
-   /*
+    /*
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath)
     {
         if editingStyle == .delete
@@ -95,6 +122,19 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
     }
  */
+  
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?)
+    {
+        if segue.identifier == "notesLink"
+        {
+            if let notesViewControllerRef = segue.destination as? NotesViewController
+            {
+                notesViewControllerRef.indexReference = docID
+            }
+        }
+
+    }
+
  
    
     
@@ -110,21 +150,22 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
  
     @IBAction func startEditing(_ sender: Any)
     {
-        self.navigationItem.rightBarButtonItem = nil
-        
-        clickEditButton += 1
-        
-        if(clickEditButton % 2 == 1)
-        {
-            //tableView.allowsMultipleSelection = true
-            tableView.allowsMultipleSelectionDuringEditing = true
-            tableView.setEditing(true, animated: false)
-        }
-        else
-        {
-            tableView.setEditing(false, animated: false)
-            self.navigationItem.rightBarButtonItem = self.addButton
-        }
+//        self.navigationItem.rightBarButtonItem = nil
+//
+//        clickEditButton += 1
+//
+//        if(clickEditButton % 2 == 1)
+//        {
+//            //tableView.allowsMultipleSelection = true
+//            tableView.allowsMultipleSelectionDuringEditing = true
+//            tableView.setEditing(true, animated: false)
+//        }
+//        else
+//        {
+//            tableView.setEditing(false, animated: false)
+//            self.navigationItem.rightBarButtonItem = self.addButton
+//        }
+        self.performSegue(withIdentifier: "addTaskLink", sender: self)
     }
     
     /*
@@ -149,6 +190,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     {
         super.viewDidLoad()
         
+//        if(addButton.isEnabled)
+//        {
+//          print ("success")
+//        }
+        
+      //  self.performSegue(withIdentifier: "addTaskLink", sender: self)
+        
       // self.navigationItem.leftBarButtonItem = self.editButtonItem
         
         highPriorityFirebaseRef = Firestore.firestore().collection("highPriorityTasks")
@@ -160,17 +208,15 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         NotificationCenter.default.addObserver(self, selector: #selector(reloadListforLow(_:)), name: NSNotification.Name("updateTableLowPriority"), object: nil)
         
-         NotificationCenter.default.addObserver(self, selector: #selector(updateNotes(_:)), name: NSNotification.Name("updateNotes"), object: nil) //NOTES
+       //  NotificationCenter.default.addObserver(self, selector: #selector(updateNotes(_:)), name: NSNotification.Name("updateNotes"), object: nil) //NOTES
         
         self.tableView.reloadData()
         loadTask()
+        
+
  
     }
     
-    @objc func updateNotes(_ notification: NSNotification)
-    {
-        
-    }
     
     override func viewWillAppear(_ animated:Bool)
     {
@@ -193,10 +239,17 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 self.highPriorityTasks.removeAll()
                 for document in docsSnapshot!.documents
                 {
-                    let newTask = TaskCell()
+                    
+                    let newTask = TaskCell() //access TaskCell class
                     newTask.name = document["name"] as! String
-
+                    /*https://stackoverflow.com/questions/47743458/swift-firestore-get-document-id*/
+                    newTask.documentID = document.documentID
+                  //  newTask.update()
+                    
+                    
                     self.highPriorityTasks.append(newTask)
+                  
+                    
                     self.loadTask()
                     self.tableView.reloadData()
                 }
@@ -228,6 +281,18 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         trial()
 
     }
+    /*
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?)
+    {
+      
+    
+    let trial = segue.destination as! NotesViewController //sets the destination as View Controller
+    
+   // something.taskName = self.task //passes the variable to the variable in View Controller
+        trial.indexReference = tableView as! Int
+    }
+    
+    */
     
     @objc func reloadListforMedium(_ notification: NSNotification)
     {

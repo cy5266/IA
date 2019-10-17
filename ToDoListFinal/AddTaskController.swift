@@ -39,7 +39,7 @@ class AddTaskController: UIViewController {
             {
         
                 highPriorityFirebaseRef2.addDocument(data: ["name": task])
-                 //  highPriorityFirebaseRef2.addDocument(data: ["name": task, "displayed": false])
+               // highPriorityFirebaseRef2.addDocument(data: ["name": task, "notes": ])
             
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: "updateTableHighPriority"), object: nil, userInfo: userInput) //uses notification and calls the notification center made in ViewController called 'updateTable' and sends in the dictionary userInput
                 
