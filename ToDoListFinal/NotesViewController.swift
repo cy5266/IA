@@ -9,23 +9,30 @@
 import UIKit
 import Firebase
 
-
 class NotesViewController: UIViewController
 {
 
     var notesFirebaseRef: CollectionReference!
     var currentTask: TaskCell!
     
+    var elementInHighPriority: Int = 0
+    
     var indexReference: String = ""
     var note: String = ""
     
-   // var allIDS: Array<Any> = []
+    var notes: Array<Any> = []
+    
+
     
     
-    override func viewDidLoad() {
+    override func viewDidLoad()
+    {
         super.viewDidLoad()
         
+        
         notesFirebaseRef = Firestore.firestore().collection("highPriorityTasks")
+        getDocuments()
+        updateNotes()
 
         // Do any additional setup after loading the view.
       //  notesFirebaseRef = Firestore.firestore().collection("notes")
@@ -58,9 +65,32 @@ class NotesViewController: UIViewController
                         print("Error updating document: \(err)")
                     } else {
                         print("Document successfully updated")
+                    self.getDocuments()
                     }
                 }
+            
+          //  updateNotes()
+            /*
+            everyDocument.updateData(["update": true])
+            {
+                err in
+                if let err = err
+                {
+                    self.getDocuments()
+                        print("Error updating document: \(err)")
+                }
+                else {
+                    print("Document successfully updated")
+                self.getDocuments()
+                }
             }
+             
+            
+ */
+            }
+            
+        
+        
             //notesFirebaseRef.addDocument(data: ["note": test])
 
            // returnToViewController()
@@ -68,12 +98,15 @@ class NotesViewController: UIViewController
             /*
              NotificationCenter.default.post(name: NSNotification.Name(rawValue: "updateNotes"), object: nil, userInfo: newNotes)
  */
+       
+        viewDidLoad()
         }
 
     
     
     func getDocuments()
     {
+        
         notesFirebaseRef.getDocuments()
         {
             (docsSnapshot, err) in
@@ -83,16 +116,42 @@ class NotesViewController: UIViewController
             }
             else
             {
+                self.notes.removeAll()
                 for document in docsSnapshot!.documents
                 {
-                    self.note = document["notes"] as! String
-                  //  self.extraNotes.text = note
+                    self.notes.append((document["notes"] as? String))
                 }
             }
             
-        //DispatchQueue.main.async
+        DispatchQueue.main.async
+            {
+                self.updateNotes()
+            }
+           
         }
+        
+//        print(notes.count)
+//        print(elementInHighPriority)
+//        print(self.notes[elementInHighPriority])
+       // updateNotes()
+        // self.updateNotes()
     }
+ 
+    func updateNotes()
+    {
+        if(!notes.isEmpty)
+        {
+            //print(self.notes[elementInHighPriority])
+        self.extraNotes.text = notes[elementInHighPriority] as? String
+            // print(self.notes[elementInHighPriority])
+
+            extraNotes.reloadInputViews()
+        //print(notes)
+            
+        }
+        
+    }
+
     /*
     // MARK: - Navigation
 
@@ -102,6 +161,7 @@ class NotesViewController: UIViewController
         // Pass the selected object to the new view controller.
     }
     */
+    
 }
 
 

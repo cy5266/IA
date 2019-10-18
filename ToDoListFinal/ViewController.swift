@@ -52,7 +52,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
-//        print("create cell with: \(namesArray[indexPath.row])" )
         let cell = tableView.dequeueReusableCell(withIdentifier: "taskCell", for: indexPath) as! TaskCell
       
        cell.labelOutlet.text = allTasks[indexPath.section].sectionContents[indexPath.row].name
@@ -71,7 +70,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     {
         shouldSegue = true
         elementIndex = indexPath.row
-        //tell euisang later
+
         docID = highPriorityTasks[elementIndex].documentID //using the element, find the TaskCell from array and access the field
         
         performSegue(withIdentifier: "notesLink", sender: Any?.self)
@@ -130,6 +129,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             if let notesViewControllerRef = segue.destination as? NotesViewController
             {
                 notesViewControllerRef.indexReference = docID
+                //HEREEEEEEEE
+                notesViewControllerRef.elementInHighPriority = elementIndex
             }
         }
 
