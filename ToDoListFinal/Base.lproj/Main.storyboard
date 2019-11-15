@@ -33,8 +33,8 @@
                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="cnX-jw-zUy">
                                 <rect key="frame" x="308" y="0.0" width="86" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="27"/>
-                                <state key="normal" title="Add"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="22"/>
+                                <state key="normal" title="Save"/>
                                 <connections>
                                     <action selector="clickAdd:" destination="37i-8r-TnL" eventType="touchUpInside" id="cKE-JB-17v"/>
                                 </connections>
@@ -94,27 +94,19 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <navigationItem key="navigationItem" id="PxI-hP-28V">
-                        <barButtonItem key="leftBarButtonItem" systemItem="edit" id="fjw-Kg-wam">
+                        <barButtonItem key="leftBarButtonItem" systemItem="edit" id="nEb-60-ZRF">
+                            <connections>
+                                <action selector="trial:" destination="BYZ-38-t0r" id="hZo-zv-pnh"/>
+                                <segue destination="9Hk-T2-f6Q" kind="show" identifier="addTaskLink" id="E0M-3j-gLV"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="fjw-Kg-wam">
                             <connections>
                                 <action selector="startEditing:" destination="BYZ-38-t0r" id="BqM-sT-1il"/>
                             </connections>
                         </barButtonItem>
-                        <rightBarButtonItems>
-                            <barButtonItem systemItem="add" id="edE-I3-gGV">
-                                <connections>
-                                    <action selector="addButton:" destination="BYZ-38-t0r" id="iiL-vs-Qmh"/>
-                                    <segue destination="9Hk-T2-f6Q" kind="show" identifier="addTaskLink" id="uyY-Ap-jr5"/>
-                                </connections>
-                            </barButtonItem>
-                            <barButtonItem title="Delete" id="nEb-60-ZRF">
-                                <connections>
-                                    <action selector="trial:" destination="BYZ-38-t0r" id="hZo-zv-pnh"/>
-                                </connections>
-                            </barButtonItem>
-                        </rightBarButtonItems>
                     </navigationItem>
                     <connections>
-                        <outlet property="addButton" destination="edE-I3-gGV" id="hpP-bx-4xI"/>
                         <outlet property="deleteTask" destination="nEb-60-ZRF" id="Xu3-i0-5mk"/>
                         <outlet property="tableView" destination="vFa-K0-J5s" id="tnD-6S-S0F"/>
                     </connections>

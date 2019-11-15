@@ -13,14 +13,21 @@ class NotesViewController: UIViewController
 {
 
     var notesFirebaseRef: CollectionReference!
+    var notesMediumFirebaseRef: CollectionReference!
+    
     var currentTask: TaskCell!
     
     var elementInHighPriority: Int = 0
+    var elementInMediumPriority: Int = 0
     
     var indexReference: String = ""
+    var indexReferenceMedium: String = ""
+    
+    var sectionIndex: Int =  0
     var note: String = ""
     
     var notes: Array<Any> = []
+    var notesForMedium: Array<Any> = []
     
 
     
@@ -31,6 +38,7 @@ class NotesViewController: UIViewController
         
         
         notesFirebaseRef = Firestore.firestore().collection("highPriorityTasks")
+        notesMediumFirebaseRef = Firestore.firestore().collection("mediumPriorityTasks")
         getDocuments()
         updateNotes()
 
@@ -41,7 +49,7 @@ class NotesViewController: UIViewController
     @IBOutlet var extraNotes: UITextView!
     
     
-    @IBAction func clickAdd(_ sender: Any)
+    @IBAction func clickAdd(_ sender: Any) //The Save button used to be Add, so it's actually clickSave
     {
         
        // print((allIDS[0] as AnyObject).documentID)
@@ -54,6 +62,9 @@ class NotesViewController: UIViewController
  */
             let test = notes;
             
+            
+            if (sectionIndex == 0)
+            {
             //need to get the docID of the document i clicked on and then add a field to it
             let everyDocument = notesFirebaseRef.document(indexReference)
             everyDocument.updateData(["notes": test])
@@ -66,47 +77,39 @@ class NotesViewController: UIViewController
                     } else {
                         print("Document successfully updated")
                     self.getDocuments()
+                    //  self.navigationController?.popViewController(animated: true)
                     }
                 }
-            
-          //  updateNotes()
-            /*
-            everyDocument.updateData(["update": true])
+            }
+            else if (sectionIndex == 1)
             {
-                err in
-                if let err = err
+                let newDocument = notesMediumFirebaseRef.document(indexReferenceMedium)
+                print("pressed")
+                newDocument.updateData(["notes": test])
                 {
-                    self.getDocuments()
-                        print("Error updating document: \(err)")
-                }
-                else {
-                    print("Document successfully updated")
-                self.getDocuments()
-                }
+                    err in
+                    if let err = err
+                    {
+                        self.getDocuments()
+                            print("Error updating document: \(err)")
+                        } else {
+                            print("Document successfully updated")
+                        self.getDocuments()
+                        //  self.navigationController?.popViewController(animated: true)
+                        }
+                    }
             }
-             
-            
- */
             }
-            
-        
-        
-            //notesFirebaseRef.addDocument(data: ["note": test])
 
-           // returnToViewController()
-    
-            /*
-             NotificationCenter.default.post(name: NSNotification.Name(rawValue: "updateNotes"), object: nil, userInfo: newNotes)
- */
-       
-        viewDidLoad()
+      //  viewDidLoad() //helped with the blinking problem
         }
 
     
     
     func getDocuments()
     {
-        
+        if (sectionIndex == 0)
+        {
         notesFirebaseRef.getDocuments()
         {
             (docsSnapshot, err) in
@@ -129,25 +132,56 @@ class NotesViewController: UIViewController
             }
            
         }
+        }
+        else if (sectionIndex == 1)
+        {
+            notesMediumFirebaseRef.getDocuments()
+            {
+                (docsSnapshot, err) in
+                if let err = err
+                {
+                    print("error \(err)")
+                }
+                else
+                {
+                    self.notesForMedium.removeAll()
+                    for document in docsSnapshot!.documents
+                    {
+                        self.notesForMedium.append((document["notes"] as? String))
+                    }
+                }
+                
+            DispatchQueue.main.async
+                {
+                    self.updateNotes()
+                }
+               
+            }
+        }
+        
         
 //        print(notes.count)
 //        print(elementInHighPriority)
 //        print(self.notes[elementInHighPriority])
        // updateNotes()
         // self.updateNotes()
+
     }
  
     func updateNotes()
     {
-        if(!notes.isEmpty)
+        if(!notes.isEmpty && (sectionIndex == 0))
         {
-            //print(self.notes[elementInHighPriority])
-        self.extraNotes.text = notes[elementInHighPriority] as? String
+            self.extraNotes.text = notes[elementInHighPriority] as? String
+            //extraNotes.reloadInputViews()
+            
+        }
+        else if (!notesForMedium.isEmpty && (sectionIndex == 1))
+        {
+            self.extraNotes.text = notesForMedium[elementInMediumPriority] as? String
             // print(self.notes[elementInHighPriority])
 
             extraNotes.reloadInputViews()
-        //print(notes)
-            
         }
         
     }

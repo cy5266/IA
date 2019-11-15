@@ -20,12 +20,13 @@ class AddTaskController: UIViewController {
     @IBOutlet weak var selectionMediumPriority: UIButton!
     @IBOutlet weak var selectionLowPriority: UIButton!
     
-    
     var unclickHighPriority = 0
     var unclickMediumPriority = 0
     var unclickLowPriority = 0
 
     var highPriorityFirebaseRef2: CollectionReference!
+    var mediumPriorityFirebaseRef2: CollectionReference!
+    var lowPriorityFirebaseRef2: CollectionReference!
     
     @IBOutlet weak var labelText: UILabel!
     
@@ -37,9 +38,8 @@ class AddTaskController: UIViewController {
             
             if clickedHighPriority
             {
-        
                 highPriorityFirebaseRef2.addDocument(data: ["name": task])
-               // highPriorityFirebaseRef2.addDocument(data: ["name": task, "notes": ])
+               // highPriorityFirebaseRef2.addDocument(data: ["name": task, "notes": ]) //if you want to add more than one field at a time
             
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: "updateTableHighPriority"), object: nil, userInfo: userInput) //uses notification and calls the notification center made in ViewController called 'updateTable' and sends in the dictionary userInput
                 
@@ -48,6 +48,9 @@ class AddTaskController: UIViewController {
             
             if clickedMediumPriority
             {
+                print("success")
+                mediumPriorityFirebaseRef2.addDocument(data: ["name" : task])
+                
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: "updateTableMediumPriority"), object: nil, userInfo: userInput)
             
                 returnToViewController()
@@ -55,6 +58,7 @@ class AddTaskController: UIViewController {
             
             if clickedLowPriority
             {
+                lowPriorityFirebaseRef2.addDocument(data: ["name": task])
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: "updateTableLowPriority"), object: nil, userInfo: userInput)
                 
                 returnToViewController()
@@ -125,6 +129,8 @@ class AddTaskController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         highPriorityFirebaseRef2 = Firestore.firestore().collection("highPriorityTasks")
+        mediumPriorityFirebaseRef2 = Firestore.firestore().collection("mediumPriorityTasks")
+        lowPriorityFirebaseRef2 = Firestore.firestore().collection("lowPriorityTasks")
     }
     
 

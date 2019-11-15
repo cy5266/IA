@@ -26,12 +26,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     var shouldSegue: Bool = false
     
     var elementIndex: Int = 0
+    var sectionIndex: Int = 0
     
     var docID: String = ""
+    var docIDforMedium: String = ""
     
     var clickEditButton = 0
     
     var highPriorityFirebaseRef: CollectionReference!
+    var mediumPriorityFirebaseRef: CollectionReference!
+    var lowPriorityFirebaseRef: CollectionReference!
     
     var namesArray: Array<String>!
   //  var isEditing: Bool {setEditing(true, animated: false)}
@@ -70,8 +74,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     {
         shouldSegue = true
         elementIndex = indexPath.row
+        sectionIndex = indexPath.section
 
-        docID = highPriorityTasks[elementIndex].documentID //using the element, find the TaskCell from array and access the field
+        if (sectionIndex == 0)
+        {
+            docID = highPriorityTasks[elementIndex].documentID //using the element, find the TaskCell from array and access the field
+        }
+        else if (sectionIndex == 1)
+        {
+            docIDforMedium = mediumPriorityTasks[elementIndex].documentID
+        }
         
         performSegue(withIdentifier: "notesLink", sender: Any?.self)
         
@@ -128,9 +140,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         {
             if let notesViewControllerRef = segue.destination as? NotesViewController
             {
-                notesViewControllerRef.indexReference = docID
-                //HEREEEEEEEE
+                notesViewControllerRef.indexReference = docID //sets the indexreference variable in notesviewcontroller as the element the user clicks
+                notesViewControllerRef.indexReferenceMedium = docIDforMedium
+                
+                notesViewControllerRef.sectionIndex = sectionIndex
                 notesViewControllerRef.elementInHighPriority = elementIndex
+                notesViewControllerRef.elementInMediumPriority = elementIndex
             }
         }
 
@@ -201,7 +216,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
       // self.navigationItem.leftBarButtonItem = self.editButtonItem
         
         highPriorityFirebaseRef = Firestore.firestore().collection("highPriorityTasks")
+        mediumPriorityFirebaseRef = Firestore.firestore().collection("mediumPriorityTasks")
+        lowPriorityFirebaseRef = Firestore.firestore().collection("lowPriorityTasks")
         trial()
+        trialMedium()
    
         NotificationCenter.default.addObserver(self, selector: #selector(reloadList(_:)), name: NSNotification.Name("updateTableHighPriority"), object: nil) //creates the notification center named 'updateTable' and calls the function reloadList when it recieves the data
     
@@ -297,24 +315,79 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     @objc func reloadListforMedium(_ notification: NSNotification)
     {
-        if let info = notification.userInfo as NSDictionary? //sets a variable as the information from the dictionary recieved from the Notification
-        {
-            if let stringFromUser = info["task"] as? String //sets a variable as the information from the key 'task'
+        trialMedium()
+    }
+    
+    func trialMedium()
+    {
+        mediumPriorityFirebaseRef.getDocuments()
             {
-              //  mediumPriorityTasks.append(stringFromUser) //adds the string from user into the array
+            (docsSnapshot, err) in
+            if let err = err
+            {
+                print("error \(err)")
+            }
+            else
+            {
+                self.mediumPriorityTasks.removeAll()
+                for document in docsSnapshot!.documents
+                {
+                    
+                    let newTask = TaskCell() //access TaskCell class
+                    newTask.name = document["name"] as! String
+                    /*https://stackoverflow.com/questions/47743458/swift-firestore-get-document-id*/
+                    newTask.documentID = document.documentID
+                  //  newTask.update()
+                    
+                    
+                    self.mediumPriorityTasks.append(newTask)
+                  
+                    self.loadTask()
+                    self.tableView.reloadData()
+                }
+                
+            }
+            
+            DispatchQueue.main.async
+                {
+            self.tableView.reloadData()
             }
         }
-        loadTask()
-        self.tableView.reloadData() //redisplays everything in the array
     }
     
     @objc func reloadListforLow(_ notification: NSNotification)
     {
-        if let info = notification.userInfo as NSDictionary? //sets a variable as the information from the dictionary recieved from the Notification
-        {
-            if let stringFromUser = info["task"] as? String //sets a variable as the information from the key 'task'
+        lowPriorityFirebaseRef.getDocuments()
             {
-               // lowPriorityTasks.append(stringFromUser) //adds the string from user into the array
+            (docsSnapshot, err) in
+            if let err = err
+            {
+                print("error \(err)")
+            }
+            else
+            {
+                self.lowPriorityTasks.removeAll()
+                for document in docsSnapshot!.documents
+                {
+                    
+                    let newTask = TaskCell() //access TaskCell class
+                    newTask.name = document["name"] as! String
+                    /*https://stackoverflow.com/questions/47743458/swift-firestore-get-document-id*/
+                    newTask.documentID = document.documentID
+                  //  newTask.update()
+                    
+                    
+                    self.lowPriorityTasks.append(newTask)
+                  
+                    self.loadTask()
+                    self.tableView.reloadData()
+                }
+                
+            }
+            
+            DispatchQueue.main.async
+                {
+            self.tableView.reloadData()
             }
         }
         loadTask()
