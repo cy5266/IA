@@ -44,9 +44,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     @IBOutlet weak var tableView: UITableView! //https://stackoverflow.com/questions/33724190/ambiguous-reference-to-member-tableview
     
-    
-    @IBOutlet var addButton: UIBarButtonItem!
-    
     @IBOutlet var deleteTask: UIBarButtonItem!
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
@@ -62,13 +59,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
         return cell
     }
-    
-    
-    @IBAction func addButton(_ sender: Any)
-    {
-        self.performSegue(withIdentifier: "addTaskLink", sender: nil)
-    }
-    
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
@@ -105,7 +95,15 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.deselectRow(at: indexPath, animated: true) //https://stackoverflow*.com/questions/33046573/why-do-my-uitableviewcells-turn-grey-when-i-tap-on-them/33046735
  */
     }
-        
+    
+    @objc func performAddTaskSegue()
+    {
+        self.performSegue(withIdentifier: "addTaskLink", sender: self)
+    }
+    
+  
+    
+    
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool
     {
         return shouldSegue
@@ -164,25 +162,25 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
  */
  
-    @IBAction func startEditing(_ sender: Any)
-    {
-//        self.navigationItem.rightBarButtonItem = nil
-//
-//        clickEditButton += 1
-//
-//        if(clickEditButton % 2 == 1)
-//        {
-//            //tableView.allowsMultipleSelection = true
-//            tableView.allowsMultipleSelectionDuringEditing = true
-//            tableView.setEditing(true, animated: false)
-//        }
-//        else
-//        {
-//            tableView.setEditing(false, animated: false)
-//            self.navigationItem.rightBarButtonItem = self.addButton
-//        }
-        self.performSegue(withIdentifier: "addTaskLink", sender: self)
-    }
+//    @IBAction func startEditing(_ sender: Any)
+//    {
+////        self.navigationItem.rightBarButtonItem = nil
+////
+////        clickEditButton += 1
+////
+////        if(clickEditButton % 2 == 1)
+////        {
+////            //tableView.allowsMultipleSelection = true
+////            tableView.allowsMultipleSelectionDuringEditing = true
+////            tableView.setEditing(true, animated: false)
+////        }
+////        else
+////        {
+////            tableView.setEditing(false, animated: false)
+////            self.navigationItem.rightBarButtonItem = self.addButton
+////        }
+//        self.performSegue(withIdentifier: "addTaskLink", sender: self)
+//    }
     
     /*
     @IBAction func deleteRows(_ sender: Any)
@@ -201,10 +199,42 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     */
  
- 
+    
+    
     override func viewDidLoad()
     {
         super.viewDidLoad()
+        
+        //let btn: UIButton = UIButton(frame: CGRect(x: 100, y: 100, width: 30, height: 40))
+        let btn: UIButton = UIButton()
+       btn.backgroundColor = UIColor.white
+        btn.setTitle("+", for: .normal)
+        btn.setTitleColor(UIColor.black, for: .normal)//https://stackoverflow.com/questions/2474289/how-can-i-change-uibutton-title-color
+            btn.titleLabel?.font =  UIFont.systemFont(ofSize: 35)
+//        btn.titleLabel?.font = UIFont(name: "Helvetica", size: 50)
+        btn.addTarget(self, action: #selector(performAddTaskSegue), for: .touchUpInside)
+//        self.view.addSubview(btn)
+        
+       // let addButton = UIBarButtonItem(title: "+", style: .done, target: self, action: Selector("performAddTaskSegue"))//https://stackoverflow.com/questions/30022780/uibarbuttonitem-in-navigation-bar-programmatically
+  //  addButton.customView?.heightAnchor.constraint(equalToConstant: 50).isActive = true
+
+        
+        //action:#selector(Class.MethodName) for swift 3
+      //self.navigationItem.rightBarButtonItem  = addButton
+         let menuBarItem = UIBarButtonItem(customView: btn)
+        self.navigationItem.rightBarButtonItem = menuBarItem
+       
+
+       // self.navigationItem.setRightBarButtonItems([item1,item2], animated: true)
+
+//        let addButton = UIBarButtonItem(title: "+", style: UIBarButtonItem.Style.plain, target: self, action: #selector(performAddTaskSegue))
+//        addButton.tintColor = UIColor.blue
+        
+        
+        navigationController?.setToolbarHidden(false, animated: true)
+        navigationController?.setNavigationBarHidden(false, animated: true)
+//
+        
         
 //        if(addButton.isEnabled)
 //        {
@@ -214,6 +244,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
       //  self.performSegue(withIdentifier: "addTaskLink", sender: self)
         
       // self.navigationItem.leftBarButtonItem = self.editButtonItem
+
         
         highPriorityFirebaseRef = Firestore.firestore().collection("highPriorityTasks")
         mediumPriorityFirebaseRef = Firestore.firestore().collection("mediumPriorityTasks")
@@ -231,9 +262,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         self.tableView.reloadData()
         loadTask()
-        
 
- 
     }
     
     
@@ -242,7 +271,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         super.viewWillAppear(animated)
         tableView.reloadData()
     }
-    
     
     func trial()
     {

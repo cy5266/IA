@@ -19,6 +19,8 @@
 		37F0487622E36DFD00C21162 /* ToDoListFinalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F0487522E36DFD00C21162 /* ToDoListFinalTests.swift */; };
 		37F0488122E36DFD00C21162 /* ToDoListFinalUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F0488022E36DFD00C21162 /* ToDoListFinalUITests.swift */; };
 		37F0489322E374FD00C21162 /* AddTaskController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F0489222E374FD00C21162 /* AddTaskController.swift */; };
+		37F5DB94237EDF9A004D68EB /* CategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F5DB93237EDF9A004D68EB /* CategoryViewController.swift */; };
+		37F5DB96237EDFD0004D68EB /* AddFolderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F5DB95237EDFD0004D68EB /* AddFolderViewController.swift */; };
 		3B0B6EF51AEAA2EB9D0AB0FF /* Pods_ToDoListFinalTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B3F495DE6E3AC289FFD7328 /* Pods_ToDoListFinalTests.framework */; };
 		8E191F90F19287A9B7AA34C4 /* Pods_ToDoListFinalUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19FC7630FBB750F55874D77F /* Pods_ToDoListFinalUITests.framework */; };
 /* End PBXBuildFile section */
@@ -60,6 +62,8 @@
 		37F0488022E36DFD00C21162 /* ToDoListFinalUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoListFinalUITests.swift; sourceTree = "<group>"; };
 		37F0488222E36DFD00C21162 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		37F0489222E374FD00C21162 /* AddTaskController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskController.swift; sourceTree = "<group>"; };
+		37F5DB93237EDF9A004D68EB /* CategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewController.swift; sourceTree = "<group>"; };
+		37F5DB95237EDFD0004D68EB /* AddFolderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFolderViewController.swift; sourceTree = "<group>"; };
 		5CB9700FFE760C16FD659739 /* Pods-ToDoListFinalUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ToDoListFinalUITests.debug.xcconfig"; path = "Target Support Files/Pods-ToDoListFinalUITests/Pods-ToDoListFinalUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		8B3F495DE6E3AC289FFD7328 /* Pods_ToDoListFinalTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ToDoListFinalTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC693BA19FC7653F73807192 /* Pods-ToDoListFinal.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ToDoListFinal.debug.xcconfig"; path = "Target Support Files/Pods-ToDoListFinal/Pods-ToDoListFinal.debug.xcconfig"; sourceTree = "<group>"; };
@@ -126,6 +130,8 @@
 				37F0486022E36DFB00C21162 /* AppDelegate.swift */,
 				37F0486222E36DFB00C21162 /* ViewController.swift */,
 				37F0486422E36DFB00C21162 /* Main.storyboard */,
+				37F5DB95237EDFD0004D68EB /* AddFolderViewController.swift */,
+				37F5DB93237EDF9A004D68EB /* CategoryViewController.swift */,
 				379A7AFB22E56F5600177777 /* TaskCell.swift */,
 				37F0489222E374FD00C21162 /* AddTaskController.swift */,
 				37F0486722E36DFD00C21162 /* Assets.xcassets */,
@@ -403,7 +409,9 @@
 				37D64277232A1C060023D310 /* NotesViewController.swift in Sources */,
 				37F0486322E36DFB00C21162 /* ViewController.swift in Sources */,
 				37F0489322E374FD00C21162 /* AddTaskController.swift in Sources */,
+				37F5DB94237EDF9A004D68EB /* CategoryViewController.swift in Sources */,
 				37F0486122E36DFB00C21162 /* AppDelegate.swift in Sources */,
+				37F5DB96237EDFD0004D68EB /* AddFolderViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
