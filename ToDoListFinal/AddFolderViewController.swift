@@ -24,7 +24,9 @@ class AddFolderViewController: UIViewController {
     {
         if let FinalFolderName = folderName.text, !FinalFolderName.isEmpty
         {
-            print(FinalFolderName)
+            let userInput: [String: String] = ["folderName" : FinalFolderName]
+            
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "updateFolderName"), object: nil, userInfo: userInput)
         }
         
         returnToFolderViewController()

@@ -13,11 +13,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 {
     struct Objects //https://www.youtube.com/watch?v=zFMSovtqqUc
     {
-        var sectionName: String
-        var sectionContents: [TaskCell]!
+        var sectionName: String //names for the section headings in the tableview e.g. High Priority
+        var sectionContents: [TaskCell]! //content in the cell (the tasks)
     }
  
-    var highPriorityTasks: Array<TaskCell> = []
+   // var highPriorityTasks: Array<TaskCell> = []
+    var highPriorityTasks = [TaskCell]()
     var mediumPriorityTasks: Array<TaskCell> = []
     var lowPriorityTasks: Array<TaskCell> = []
     
@@ -25,37 +26,37 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     var shouldSegue: Bool = false
     
-    var elementIndex: Int = 0
-    var sectionIndex: Int = 0
+    var elementIndex: Int = 0  //element user clicks on within a section
+    var sectionIndex: Int = 0  //section user clicks on
     
-    var docID: String = ""
-    var docIDforMedium: String = ""
+    var docID: String = ""  //docID from firebase for highpriority tasks
+    var docIDforMedium: String = "" //docID from firebase for medium priority tasks
+    var docIDforLow: String = ""
     
     var clickEditButton = 0
     
-    var highPriorityFirebaseRef: CollectionReference!
-    var mediumPriorityFirebaseRef: CollectionReference!
-    var lowPriorityFirebaseRef: CollectionReference!
+    var highPriorityFirebaseRef: CollectionReference!  //high priority firebase collection reference
+    var mediumPriorityFirebaseRef: CollectionReference!   //medium priority firebase collection reference
+    var lowPriorityFirebaseRef: CollectionReference! //low priority firebase collection reference
     
-    var namesArray: Array<String>!
   //  var isEditing: Bool {setEditing(true, animated: false)}
     
-    var notes: String = ""
+    var notes: String = ""  //notes for the tasks
     
     @IBOutlet weak var tableView: UITableView! //https://stackoverflow.com/questions/33724190/ambiguous-reference-to-member-tableview
     
     @IBOutlet var deleteTask: UIBarButtonItem!
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int //creates number of rows in each section
     {
-        return allTasks[section].sectionContents.count
+        return allTasks[section].sectionContents.count  //makes the number of rows the amount of content within each priority section
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell  //detects the cells at a certain row
     {
         let cell = tableView.dequeueReusableCell(withIdentifier: "taskCell", for: indexPath) as! TaskCell
       
-       cell.labelOutlet.text = allTasks[indexPath.section].sectionContents[indexPath.row].name
+       cell.labelOutlet.text = allTasks[indexPath.section].sectionContents[indexPath.row].name  //makes the cell text the task
 
         return cell
     }
@@ -74,26 +75,32 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         {
             docIDforMedium = mediumPriorityTasks[elementIndex].documentID
         }
+        else if (sectionIndex == 2)
+        {
+            docIDforLow = lowPriorityTasks[elementIndex].documentID
+        }
         
         performSegue(withIdentifier: "notesLink", sender: Any?.self)
         
         shouldSegue = false
-       // if tableView.cellForRow(at: indexPath)?.accessoryType == UITableViewCell.AccessoryType.checkmark //https://www.youtube.com/watch?v=5MZ-WJuSdpg
-        
+//        if tableView.cellForRow(at: indexPath)?.accessoryType == UITableViewCell.AccessoryType.checkmark
+//        { //https://www.youtube.com/watch?v=5MZ-WJuSdpg
+//
+//
+//
+//            tableView.cellForRow(at: indexPath)?.accessoryType = UITableViewCell.AccessoryType.none
+//
+//        }
+//        else
+//        {
+//            if (clickEditButton % 2 == 0)
+//            {
+//            tableView.cellForRow(at: indexPath)?.accessoryType = UITableViewCell.AccessoryType.checkmark
+//            }
+//        }
+//        tableView.deselectRow(at: indexPath, animated: true) //https://stackoverflow*.com/questions/33046573/why-do-my-uitableviewcells-turn-grey-when-i-tap-on-them/33046735
+ 
     
-
-            //tableView.cellForRow(at: indexPath)?.accessoryType = UITableViewCell.AccessoryType.none
-    
-            /*
-        else
-        {
-            if (clickEditButton % 2 == 0)
-            {
-            tableView.cellForRow(at: indexPath)?.accessoryType = UITableViewCell.AccessoryType.checkmark
-            }
-        }
-        tableView.deselectRow(at: indexPath, animated: true) //https://stackoverflow*.com/questions/33046573/why-do-my-uitableviewcells-turn-grey-when-i-tap-on-them/33046735
- */
     }
     
     @objc func performAddTaskSegue()
@@ -101,7 +108,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         self.performSegue(withIdentifier: "addTaskLink", sender: self)
     }
     
-  
     
     
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool
@@ -144,6 +150,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 notesViewControllerRef.sectionIndex = sectionIndex
                 notesViewControllerRef.elementInHighPriority = elementIndex
                 notesViewControllerRef.elementInMediumPriority = elementIndex
+                notesViewControllerRef.elementInLowPriority = elementIndex
             }
         }
 
@@ -204,6 +211,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     override func viewDidLoad()
     {
         super.viewDidLoad()
+        self.navigationController?.isToolbarHidden = false
         
         //let btn: UIButton = UIButton(frame: CGRect(x: 100, y: 100, width: 30, height: 40))
         let btn: UIButton = UIButton()
@@ -223,15 +231,27 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
       //self.navigationItem.rightBarButtonItem  = addButton
          let menuBarItem = UIBarButtonItem(customView: btn)
         self.navigationItem.rightBarButtonItem = menuBarItem
-       
-
+        
+        
+       var items = [UIBarButtonItem]()
+        let doneButton = UIButton()
+        doneButton.setTitle("Done", for: .normal)
+        btn.setTitleColor(UIColor.black, for: .normal)
+        doneButton.addTarget(self, action: #selector(folderDone), for: .touchUpInside)
+       let barButton = UIBarButtonItem(customView: doneButton)
+        
+        items.append(
+            barButton
+        )
+        toolbarItems = items
+        
+        
+//UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(folderDone))
        // self.navigationItem.setRightBarButtonItems([item1,item2], animated: true)
 
 //        let addButton = UIBarButtonItem(title: "+", style: UIBarButtonItem.Style.plain, target: self, action: #selector(performAddTaskSegue))
 //        addButton.tintColor = UIColor.blue
         
-        
-        navigationController?.setToolbarHidden(false, animated: true)
         navigationController?.setNavigationBarHidden(false, animated: true)
 //
         
@@ -251,6 +271,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         lowPriorityFirebaseRef = Firestore.firestore().collection("lowPriorityTasks")
         trial()
         trialMedium()
+        
    
         NotificationCenter.default.addObserver(self, selector: #selector(reloadList(_:)), name: NSNotification.Name("updateTableHighPriority"), object: nil) //creates the notification center named 'updateTable' and calls the function reloadList when it recieves the data
     
@@ -265,6 +286,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
     }
     
+    @objc func folderDone()
+    {
+        print("success")
+        self.performSegue(withIdentifier: "folderMainLink", sender: self)
+
+    }
     
     override func viewWillAppear(_ animated:Bool)
     {
@@ -291,8 +318,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                     newTask.name = document["name"] as! String
                     /*https://stackoverflow.com/questions/47743458/swift-firestore-get-document-id*/
                     newTask.documentID = document.documentID
-                  //  newTask.update()
-                    
                     
                     self.highPriorityTasks.append(newTask)
                   

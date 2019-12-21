@@ -14,22 +14,24 @@ class NotesViewController: UIViewController
 
     var notesFirebaseRef: CollectionReference!
     var notesMediumFirebaseRef: CollectionReference!
-    
+    var notesLowFirebaseRef: CollectionReference!
+
     var currentTask: TaskCell!
     
     var elementInHighPriority: Int = 0
     var elementInMediumPriority: Int = 0
+    var elementInLowPriority: Int = 0
     
     var indexReference: String = ""
     var indexReferenceMedium: String = ""
-    
+    var indexReferenceLow: String = ""
+
     var sectionIndex: Int =  0
     var note: String = ""
     
     var notes: Array<Any> = []
     var notesForMedium: Array<Any> = []
-    
-
+    var notesForLow: Array<Any> = []
     
     
     override func viewDidLoad()
@@ -39,6 +41,7 @@ class NotesViewController: UIViewController
         
         notesFirebaseRef = Firestore.firestore().collection("highPriorityTasks")
         notesMediumFirebaseRef = Firestore.firestore().collection("mediumPriorityTasks")
+        notesLowFirebaseRef = Firestore.firestore().collection("lowPriorityTasks")
         getDocuments()
         updateNotes()
 
@@ -99,6 +102,25 @@ class NotesViewController: UIViewController
                         }
                     }
             }
+            else if (sectionIndex == 2)
+            {
+                let newDocument = notesLowFirebaseRef.document(indexReferenceLow)
+                print("pressed")
+                newDocument.updateData(["notes": test])
+                {
+                    err in
+                    if let err = err
+                    {
+                        self.getDocuments()
+                            print("Error updating document: \(err)")
+                        } else {
+                            print("Document successfully updated")
+                        self.getDocuments()
+                        //  self.navigationController?.popViewController(animated: true)
+                        }
+                    }
+            }
+            
             }
 
       //  viewDidLoad() //helped with the blinking problem
@@ -159,6 +181,32 @@ class NotesViewController: UIViewController
             }
         }
         
+        else if (sectionIndex == 2)
+        {
+            notesLowFirebaseRef.getDocuments()
+            {
+                (docsSnapshot, err) in
+                if let err = err
+                {
+                    print("error \(err)")
+                }
+                else
+                {
+                    self.notesForLow.removeAll()
+                    for document in docsSnapshot!.documents
+                    {
+                        self.notesForLow.append((document["notes"] as? String))
+                    }
+                }
+                
+            DispatchQueue.main.async
+                {
+                    self.updateNotes()
+                }
+               
+            }
+        }
+        
         
 //        print(notes.count)
 //        print(elementInHighPriority)
@@ -179,6 +227,13 @@ class NotesViewController: UIViewController
         else if (!notesForMedium.isEmpty && (sectionIndex == 1))
         {
             self.extraNotes.text = notesForMedium[elementInMediumPriority] as? String
+            // print(self.notes[elementInHighPriority])
+
+            extraNotes.reloadInputViews()
+        }
+        else if (!notesForLow.isEmpty && (sectionIndex == 2))
+        {
+            self.extraNotes.text = notesForLow[elementInLowPriority] as? String
             // print(self.notes[elementInHighPriority])
 
             extraNotes.reloadInputViews()
