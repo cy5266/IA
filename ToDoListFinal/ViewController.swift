@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import FirebaseFirestore
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource
 {
@@ -55,10 +56,41 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell  //detects the cells at a certain row
     {
         let cell = tableView.dequeueReusableCell(withIdentifier: "taskCell", for: indexPath) as! TaskCell
-      
-       cell.labelOutlet.text = allTasks[indexPath.section].sectionContents[indexPath.row].name  //makes the cell text the task
-
+        cell.labelOutlet.text = allTasks[indexPath.section].sectionContents[indexPath.row].name  //makes the cell text the task
         return cell
+        
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath)
+    {
+        sectionIndex = indexPath.section
+         elementIndex = indexPath.row
+        
+        if editingStyle == UITableViewCell.EditingStyle.delete //https://www.youtube.com/watch?v=h7kasGi_1Tk
+        {
+            if (sectionIndex == 0) //delete high priority tasks
+            {
+                docID = highPriorityTasks[elementIndex].documentID
+                highPriorityTasks.remove(at: elementIndex)
+                print(highPriorityTasks)
+                highPriorityFirebaseRef.document(docID).delete() //https://stackoverflow.com/questions/57943765/swift-firestore-delete-document
+                viewDidLoad()
+            }
+            else if (sectionIndex == 1)
+            {
+                docIDforMedium = mediumPriorityTasks[elementIndex].documentID
+                mediumPriorityTasks.remove(at: elementIndex)
+                mediumPriorityFirebaseRef.document(docIDforMedium).delete()
+                viewDidLoad()
+            }
+            else if (sectionIndex == 2)
+            {
+                docIDforLow = lowPriorityTasks[elementIndex].documentID
+                lowPriorityTasks.remove(at: elementIndex)
+                lowPriorityFirebaseRef.document(docIDforLow).delete()
+                viewDidLoad()
+            }
+        }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
@@ -146,6 +178,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             {
                 notesViewControllerRef.indexReference = docID //sets the indexreference variable in notesviewcontroller as the element the user clicks
                 notesViewControllerRef.indexReferenceMedium = docIDforMedium
+                notesViewControllerRef.indexReferenceLow = docIDforLow
                 
                 notesViewControllerRef.sectionIndex = sectionIndex
                 notesViewControllerRef.elementInHighPriority = elementIndex
@@ -215,62 +248,37 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         //let btn: UIButton = UIButton(frame: CGRect(x: 100, y: 100, width: 30, height: 40))
         let btn: UIButton = UIButton()
-       btn.backgroundColor = UIColor.white
+        btn.backgroundColor = UIColor.white
         btn.setTitle("+", for: .normal)
         btn.setTitleColor(UIColor.black, for: .normal)//https://stackoverflow.com/questions/2474289/how-can-i-change-uibutton-title-color
-            btn.titleLabel?.font =  UIFont.systemFont(ofSize: 35)
-//        btn.titleLabel?.font = UIFont(name: "Helvetica", size: 50)
+        btn.titleLabel?.font =  UIFont.systemFont(ofSize: 35)
         btn.addTarget(self, action: #selector(performAddTaskSegue), for: .touchUpInside)
-//        self.view.addSubview(btn)
         
-       // let addButton = UIBarButtonItem(title: "+", style: .done, target: self, action: Selector("performAddTaskSegue"))//https://stackoverflow.com/questions/30022780/uibarbuttonitem-in-navigation-bar-programmatically
-  //  addButton.customView?.heightAnchor.constraint(equalToConstant: 50).isActive = true
-
-        
-        //action:#selector(Class.MethodName) for swift 3
-      //self.navigationItem.rightBarButtonItem  = addButton
-         let menuBarItem = UIBarButtonItem(customView: btn)
+        let menuBarItem = UIBarButtonItem(customView: btn)
         self.navigationItem.rightBarButtonItem = menuBarItem
+       
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         
         
        var items = [UIBarButtonItem]()
         let doneButton = UIButton()
         doneButton.setTitle("Done", for: .normal)
+        doneButton.backgroundColor = UIColor.black
         btn.setTitleColor(UIColor.black, for: .normal)
         doneButton.addTarget(self, action: #selector(folderDone), for: .touchUpInside)
-       let barButton = UIBarButtonItem(customView: doneButton)
+        let barButton = UIBarButtonItem(customView: doneButton)
         
-        items.append(
-            barButton
-        )
+        items.append(barButton)
         toolbarItems = items
         
-        
-//UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(folderDone))
-       // self.navigationItem.setRightBarButtonItems([item1,item2], animated: true)
-
-//        let addButton = UIBarButtonItem(title: "+", style: UIBarButtonItem.Style.plain, target: self, action: #selector(performAddTaskSegue))
-//        addButton.tintColor = UIColor.blue
-        
         navigationController?.setNavigationBarHidden(false, animated: true)
-//
-        
-        
-//        if(addButton.isEnabled)
-//        {
-//          print ("success")
-//        }
-        
-      //  self.performSegue(withIdentifier: "addTaskLink", sender: self)
-        
-      // self.navigationItem.leftBarButtonItem = self.editButtonItem
-
         
         highPriorityFirebaseRef = Firestore.firestore().collection("highPriorityTasks")
         mediumPriorityFirebaseRef = Firestore.firestore().collection("mediumPriorityTasks")
         lowPriorityFirebaseRef = Firestore.firestore().collection("lowPriorityTasks")
         trial()
         trialMedium()
+        trialForLow()
         
    
         NotificationCenter.default.addObserver(self, selector: #selector(reloadList(_:)), name: NSNotification.Name("updateTableHighPriority"), object: nil) //creates the notification center named 'updateTable' and calls the function reloadList when it recieves the data
@@ -409,6 +417,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     @objc func reloadListforLow(_ notification: NSNotification)
+    {
+        trialForLow()
+    }
+    
+    func trialForLow()
     {
         lowPriorityFirebaseRef.getDocuments()
             {
