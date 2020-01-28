@@ -276,7 +276,7 @@
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="folderLable" destination="QUm-E6-oN0" id="6Ws-Tg-B6J"/>
-                                            <segue destination="lZj-ZV-0nV" kind="presentation" identifier="folderMainLink" modalPresentationStyle="overFullScreen" id="CXT-xM-g9X"/>
+                                            <segue destination="BYZ-38-t0r" kind="show" identifier="folderMainLink" id="aqF-b3-qtV"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -292,7 +292,7 @@
                     <navigationItem key="navigationItem" id="Frt-FF-UKN">
                         <barButtonItem key="rightBarButtonItem" style="plain" systemItem="add" id="6ms-b4-Nuk">
                             <connections>
-                                <segue destination="FlK-gF-bmD" kind="show" id="9DQ-EW-7Wf"/>
+                                <segue destination="FlK-gF-bmD" kind="show" identifier="folderLink" id="9DQ-EW-7Wf"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -324,4 +324,7 @@
             <point key="canvasLocation" x="137.68115942028987" y="109.82142857142857"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="aqF-b3-qtV"/>
+    </inferredMetricsTieBreakers>
 </document>

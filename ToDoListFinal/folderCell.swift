@@ -14,6 +14,7 @@ class folderCell: UITableViewCell
     @IBOutlet var folderLable: UIView!
     
     var name: String = ""
+    var documentID: String = ""
     
 //    func update()
 //       {

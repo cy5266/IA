@@ -29,17 +29,20 @@ class AddTaskController: UIViewController {
     var mediumPriorityFirebaseRef2: CollectionReference!
     var lowPriorityFirebaseRef2: CollectionReference!
     
+    var folderIndex: Int = 0
+    
     @IBOutlet weak var labelText: UILabel!
     
     @IBAction func addTask(_ sender: Any)
     {
+        print(folderIndex)
         if let task = taskAdd.text, !task.isEmpty
         {
             let userInput: [String: String] = ["task" : task] //putting the user input into a dictorionary with the key 'task'
             
             if clickedHighPriority
             {
-                highPriorityFirebaseRef2.addDocument(data: ["name": task])
+                highPriorityFirebaseRef2.addDocument(data: ["name": task, "index": folderIndex])
                // highPriorityFirebaseRef2.addDocument(data: ["name": task, "notes": ]) //if you want to add more than one field at a time
             
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: "updateTableHighPriority"), object: nil, userInfo: userInput) //uses notification and calls the notification center made in ViewController called 'updateTable' and sends in the dictionary userInput
@@ -49,8 +52,7 @@ class AddTaskController: UIViewController {
             
             if clickedMediumPriority
             {
-                print("success")
-                mediumPriorityFirebaseRef2.addDocument(data: ["name" : task])
+                mediumPriorityFirebaseRef2.addDocument(data: ["name": task, "index": folderIndex])
                 
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: "updateTableMediumPriority"), object: nil, userInfo: userInput)
             
@@ -59,7 +61,7 @@ class AddTaskController: UIViewController {
             
             if clickedLowPriority
             {
-                lowPriorityFirebaseRef2.addDocument(data: ["name": task])
+                lowPriorityFirebaseRef2.addDocument(data: ["name": task, "index": folderIndex])
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: "updateTableLowPriority"), object: nil, userInfo: userInput)
                 
                 returnToViewController()

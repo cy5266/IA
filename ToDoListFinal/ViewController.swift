@@ -26,15 +26,20 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     var allTasks = [Objects]()
     
     var shouldSegue: Bool = false
+    var shouldDelete: Bool = false
     
     var elementIndex: Int = 0  //element user clicks on within a section
     var sectionIndex: Int = 0  //section user clicks on
+    
+    var folderIndex: Int = 0 //folder index the user clicks on in the categoryivew
     
     var docID: String = ""  //docID from firebase for highpriority tasks
     var docIDforMedium: String = "" //docID from firebase for medium priority tasks
     var docIDforLow: String = ""
     
     var clickEditButton = 0
+    
+    var message: Int = 0
     
     var highPriorityFirebaseRef: CollectionReference!  //high priority firebase collection reference
     var mediumPriorityFirebaseRef: CollectionReference!   //medium priority firebase collection reference
@@ -186,6 +191,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 notesViewControllerRef.elementInLowPriority = elementIndex
             }
         }
+        if segue.identifier == "addTaskLink"
+        {
+            if let AddTaskContollerRef = segue.destination as? AddTaskController
+            {
+                AddTaskContollerRef.folderIndex = folderIndex
+        }
+        }
 
     }
 
@@ -196,50 +208,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     {
         return true
     }
-    /*
-    func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        return true
-    }
- */
  
-//    @IBAction func startEditing(_ sender: Any)
-//    {
-////        self.navigationItem.rightBarButtonItem = nil
-////
-////        clickEditButton += 1
-////
-////        if(clickEditButton % 2 == 1)
-////        {
-////            //tableView.allowsMultipleSelection = true
-////            tableView.allowsMultipleSelectionDuringEditing = true
-////            tableView.setEditing(true, animated: false)
-////        }
-////        else
-////        {
-////            tableView.setEditing(false, animated: false)
-////            self.navigationItem.rightBarButtonItem = self.addButton
-////        }
-//        self.performSegue(withIdentifier: "addTaskLink", sender: self)
-//    }
-    
-    /*
-    @IBAction func deleteRows(_ sender: Any)
-    {
-        
-        if tableView.indexPathsForSelectedRows != nil
-        {
-            var selectedRows = tableView.indexPathsForSelectedRows!
-
-            for indexPath in selectedRows  {
-               // items.append(numbers[indexPath.row])
-                highPriorityTasks.append(String(allTasks[indexPath.row]))
-            }
-        
-        }
-    }
-    */
- 
-    
     
     override func viewDidLoad()
     {
@@ -260,17 +229,18 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         
         
-       var items = [UIBarButtonItem]()
-        let doneButton = UIButton()
-        doneButton.setTitle("Done", for: .normal)
-        doneButton.backgroundColor = UIColor.black
-        btn.setTitleColor(UIColor.black, for: .normal)
-        doneButton.addTarget(self, action: #selector(folderDone), for: .touchUpInside)
-        let barButton = UIBarButtonItem(customView: doneButton)
-        
-        items.append(barButton)
-        toolbarItems = items
-        
+//       var items = [UIBarButtonItem]()
+//        let doneButton = UIButton()
+//        doneButton.setTitle("Done", for: .normal)
+//        doneButton.backgroundColor = UIColor.black
+//
+//        btn.setTitleColor(UIColor.black, for: .normal)
+//        doneButton.addTarget(self, action: #selector(folderDone), for: .touchUpInside)
+//        let barButton = UIBarButtonItem(customView: doneButton)
+//
+//        items.append(barButton)
+//        toolbarItems = items
+//
         navigationController?.setNavigationBarHidden(false, animated: true)
         
         highPriorityFirebaseRef = Firestore.firestore().collection("highPriorityTasks")
@@ -287,6 +257,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         NotificationCenter.default.addObserver(self, selector: #selector(reloadListforLow(_:)), name: NSNotification.Name("updateTableLowPriority"), object: nil)
         
+        NotificationCenter.default.addObserver(self, selector: #selector(removeElements(_:)), name: NSNotification.Name("updateRemoveElements"), object: nil)
        //  NotificationCenter.default.addObserver(self, selector: #selector(updateNotes(_:)), name: NSNotification.Name("updateNotes"), object: nil) //NOTES
         
         self.tableView.reloadData()
@@ -294,12 +265,27 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
     }
     
-    @objc func folderDone()
+    @objc func removeElements(_ notification: NSNotification)
     {
-        print("success")
-        self.performSegue(withIdentifier: "folderMainLink", sender: self)
-
+        
     }
+    
+    func trialForFolder(element: Int) -> Int
+    {
+        print("hello")
+        
+        let tempElement = element
+        
+        return(tempElement)
+    }
+    
+    
+    func shouldDeleteFolder() -> Bool
+    {
+        shouldDelete = true
+        return shouldDelete
+    }
+    
     
     override func viewWillAppear(_ animated:Bool)
     {
@@ -309,6 +295,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     func trial()
     {
+    
         highPriorityFirebaseRef.getDocuments()
             {
             (docsSnapshot, err) in
@@ -321,14 +308,27 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 self.highPriorityTasks.removeAll()
                 for document in docsSnapshot!.documents
                 {
+            
                     
                     let newTask = TaskCell() //access TaskCell class
                     newTask.name = document["name"] as! String
                     /*https://stackoverflow.com/questions/47743458/swift-firestore-get-document-id*/
                     newTask.documentID = document.documentID
+                   
+                    let tempFolderIndex = document["index"] as! Int //bascially seeing which folder the user chose to add tasks into
                     
+                    
+                    if(tempFolderIndex == self.folderIndex) //if the folder the task is from equals to the folder the user clicked
+                    {
                     self.highPriorityTasks.append(newTask)
+                   
+                    }
                   
+                    if (document["index"] as! Int == tempFolderIndex && self.shouldDelete)
+                    {
+                        self.highPriorityFirebaseRef.document(document.documentID).delete()
+                        self.shouldDelete = false
+                    }
                     
                     self.loadTask()
                     self.tableView.reloadData()
@@ -341,6 +341,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             self.tableView.reloadData()
             }
         }
+    
+
         // trialReload()
         //self.tableView.reloadData()
     }
@@ -361,6 +363,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         trial()
 
     }
+    
     /*
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
     {
@@ -400,9 +403,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                     newTask.documentID = document.documentID
                   //  newTask.update()
                     
+                    let tempFolderIndex = document["index"] as! Int //bascially seeing which folder the user chose to add tasks into
                     
+                    
+                    if(tempFolderIndex == self.folderIndex) //if the folder the task is from equals to the folder the user clicked
+                    {
                     self.mediumPriorityTasks.append(newTask)
-                  
+                    }
+                    
                     self.loadTask()
                     self.tableView.reloadData()
                 }
@@ -442,9 +450,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                     newTask.documentID = document.documentID
                   //  newTask.update()
                     
+                    let tempFolderIndex = document["index"] as! Int //bascially seeing which folder the user chose to add tasks into
                     
+                    
+                    if(tempFolderIndex == self.folderIndex) //if the folder the task is from equals to the folder the user clicked
+                    {
                     self.lowPriorityTasks.append(newTask)
-                  
+                    }
                     self.loadTask()
                     self.tableView.reloadData()
                 }

@@ -7,15 +7,21 @@
 //
 
 import UIKit
+import Firebase
+import FirebaseFirestore    
 
-class AddFolderViewController: UIViewController {
+class AddFolderViewController: UIViewController
+{
 
     @IBOutlet var folderName: UITextField!
+    var folderRow: Int = 0
     
+     var folderReference: CollectionReference!
     
     override func viewDidLoad()
     {
         super.viewDidLoad()
+        folderReference = Firestore.firestore().collection("folders")
 
         // Do any additional setup after loading the view.
     }
@@ -25,7 +31,7 @@ class AddFolderViewController: UIViewController {
         if let FinalFolderName = folderName.text, !FinalFolderName.isEmpty
         {
             let userInput: [String: String] = ["folderName" : FinalFolderName]
-            
+             folderReference.addDocument(data: ["title": FinalFolderName])            
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: "updateFolderName"), object: nil, userInfo: userInput)
         }
         
