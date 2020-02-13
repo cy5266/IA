@@ -31,6 +31,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     var elementIndex: Int = 0  //element user clicks on within a section
     var sectionIndex: Int = 0  //section user clicks on
     
+    var tempElement: Int = 0
+    
     var folderIndex: Int = 0 //folder index the user clicks on in the categoryivew
     
     var docID: String = ""  //docID from firebase for highpriority tasks
@@ -257,35 +259,38 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         NotificationCenter.default.addObserver(self, selector: #selector(reloadListforLow(_:)), name: NSNotification.Name("updateTableLowPriority"), object: nil)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(removeElements(_:)), name: NSNotification.Name("updateRemoveElements"), object: nil)
-       //  NotificationCenter.default.addObserver(self, selector: #selector(updateNotes(_:)), name: NSNotification.Name("updateNotes"), object: nil) //NOTES
-        
         self.tableView.reloadData()
         loadTask()
 
     }
-    
-    @objc func removeElements(_ notification: NSNotification)
-    {
-        
-    }
-    
+
     func trialForFolder(element: Int) -> Int
     {
-        print("hello")
-        
-        let tempElement = element
-        
+        tempElement = element
         return(tempElement)
     }
     
-    
-    func shouldDeleteFolder() -> Bool
+    func removeElementHigh(remove: String)
     {
-        shouldDelete = true
-        return shouldDelete
+        var counter = 0
+        for elements in highPriorityTasks
+        {
+            
+            if (elements.name == remove)
+            {
+        highPriorityTasks.remove(at: counter)
+            }
+            counter =  counter + 1
+        }
+//        if !highPriorityTasks.isEmpty
+//        {
+//        self.tableView.reloadData() //theres nill here
+//        }
+//        else
+//        {
+//
+//        }
     }
-    
     
     override func viewWillAppear(_ animated:Bool)
     {
@@ -317,19 +322,18 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                    
                     let tempFolderIndex = document["index"] as! Int //bascially seeing which folder the user chose to add tasks into
                     
-                    
                     if(tempFolderIndex == self.folderIndex) //if the folder the task is from equals to the folder the user clicked
                     {
                     self.highPriorityTasks.append(newTask)
                    
                     }
-                  
-                    if (document["index"] as! Int == tempFolderIndex && self.shouldDelete)
-                    {
-                        self.highPriorityFirebaseRef.document(document.documentID).delete()
-                        self.shouldDelete = false
-                    }
-                    
+
+//                    if ((document["index"] as! Int == tempFolderIndex) && self.shouldDelete)
+//                    {
+//                        self.highPriorityFirebaseRef.document(document.documentID).delete()
+//                        self.shouldDelete = false
+//                    }
+
                     self.loadTask()
                     self.tableView.reloadData()
                 }

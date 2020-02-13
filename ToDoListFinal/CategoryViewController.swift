@@ -16,8 +16,10 @@ class CategoryViewController: UIViewController, UITableViewDataSource, UITableVi
     @IBOutlet var folderView: UITableView!
     
     var allFolders = [folderCell]()
+    var highPriority = [String]()
     var elementIndexForFolder: Int = 0
     var foldersFirebaseRef: CollectionReference!
+    var highPriorityFirebaseRef: CollectionReference!
 
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
@@ -54,22 +56,69 @@ class CategoryViewController: UIViewController, UITableViewDataSource, UITableVi
                
                if editingStyle == UITableViewCell.EditingStyle.delete //https://www.youtube.com/watch?v=h7kasGi_1Tk
                {
-                let userInput: [String: Int] = ["updateRemove" : elementIndex]
-                      //  folderReference.addDocument(data: ["title": FinalFolderName])
-               
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "updateRemoveElements"), object: nil, userInfo: userInput)
+//                let userInput: [String: Int] = ["updateRemove" : elementIndex]
+//                      //  folderReference.addDocument(data: ["title": FinalFolderName])
+//
+//                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "updateRemoveElements"), object: nil, userInfo: userInput)
+//
+//                print(elementIndex)
+//                let ViewContollerB = ViewController()
+//
+//                ViewContollerB.trialForFolder(element: elementIndex)
+//                ViewContollerB.shouldDeleteFolder()
+  //              ViewContollerB.trial()
                 
-                print(elementIndex)
-                let ViewContollerB = ViewController()
-                ViewContollerB.trialForFolder(element: elementIndex)
-                //ViewContollerB.shouldDeleteFolder()
+                
+                
                 
                let docIDforFolder = allFolders[elementIndex].documentID
                allFolders.remove(at: elementIndex)
                foldersFirebaseRef.document(docIDforFolder).delete()
+                trialForHigh(element: elementIndex)
                viewDidLoad()
 
                }
+    }
+    
+    func trialForHigh(element: Int)
+    {
+        highPriorityFirebaseRef.getDocuments()
+            {
+            (docsSnapshot, err) in
+            if let err = err
+            {
+                print("error \(err)")
+            }
+            else
+            {
+                self.highPriority.removeAll()
+                for document in docsSnapshot!.documents
+                {
+                    if document["index"] as! Int == element
+                    {
+                        let temp = document.documentID
+                        self.highPriorityFirebaseRef.document(temp).delete()
+                       // self.highPriority.append(document["name"] as! String)
+                        let removetThisElement = document["name"] as! String
+                        let ViewContollerB = ViewController()
+                        ViewContollerB.removeElementHigh(remove: removetThisElement)
+                        
+                                      
+                    }
+                    
+                }
+                
+              
+               // ViewContollerB.tableView.reloadData()
+            }
+            
+            DispatchQueue.main.async
+                {
+                    self.folderView.reloadData()
+            }
+        }
+        // trialReload()
+        //self.tableView.reloadData()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
@@ -99,6 +148,7 @@ class CategoryViewController: UIViewController, UITableViewDataSource, UITableVi
         NotificationCenter.default.addObserver(self, selector: #selector(reloadFolders(_:)), name: NSNotification.Name("updateFolderName"), object: nil)
         
         foldersFirebaseRef = Firestore.firestore().collection("folders")
+        highPriorityFirebaseRef = Firestore.firestore().collection("highPriorityTasks")
         trial()
         
         // Do any additional setup after loading the view.
