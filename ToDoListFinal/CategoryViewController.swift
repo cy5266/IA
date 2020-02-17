@@ -17,10 +17,13 @@ class CategoryViewController: UIViewController, UITableViewDataSource, UITableVi
     
     var allFolders = [folderCell]()
     var highPriority = [String]()
+    var medPriority = [String]()
+    var lowPriority = [String]()
     var elementIndexForFolder: Int = 0
     var foldersFirebaseRef: CollectionReference!
     var highPriorityFirebaseRef: CollectionReference!
-
+    var mediumPriorityFirebaseRef: CollectionReference!
+    var lowPriorityFirebaseRef: CollectionReference!
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
@@ -56,28 +59,24 @@ class CategoryViewController: UIViewController, UITableViewDataSource, UITableVi
                
                if editingStyle == UITableViewCell.EditingStyle.delete //https://www.youtube.com/watch?v=h7kasGi_1Tk
                {
-//                let userInput: [String: Int] = ["updateRemove" : elementIndex]
-//                      //  folderReference.addDocument(data: ["title": FinalFolderName])
-//
-//                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "updateRemoveElements"), object: nil, userInfo: userInput)
-//
-//                print(elementIndex)
-//                let ViewContollerB = ViewController()
-//
-//                ViewContollerB.trialForFolder(element: elementIndex)
-//                ViewContollerB.shouldDeleteFolder()
-  //              ViewContollerB.trial()
-                
-                
-                
-                
                let docIDforFolder = allFolders[elementIndex].documentID
                allFolders.remove(at: elementIndex)
                foldersFirebaseRef.document(docIDforFolder).delete()
-                trialForHigh(element: elementIndex)
+//                if(elementIndex == 0)
+//                {
+                    trialForHigh(element: elementIndex)
+                //}
+//                else if(elementIndex == 1)
+//                {
+                    trialForMedium(element: elementIndex)
+//                }
+//                else if (elementIndex == 2)
+//                {
+                    trialForLow(element: elementIndex)
+//                }
                viewDidLoad()
-
-               }
+                
+              }
     }
     
     func trialForHigh(element: Int)
@@ -102,23 +101,104 @@ class CategoryViewController: UIViewController, UITableViewDataSource, UITableVi
                         let removetThisElement = document["name"] as! String
                         let ViewContollerB = ViewController()
                         ViewContollerB.removeElementHigh(remove: removetThisElement)
-                        
-                                      
                     }
-                    
+                    else if document["index"] as! Int > element
+                    {
+                        let documentID = document.documentID
+                        var tempValue = document["index"] as! Int
+                        tempValue-=1
+
+                        let everyDocument = self.highPriorityFirebaseRef.document(documentID)
+                        everyDocument.updateData(["index": tempValue])
+                    }
                 }
-                
-              
-               // ViewContollerB.tableView.reloadData()
             }
-            
             DispatchQueue.main.async
                 {
                     self.folderView.reloadData()
             }
         }
-        // trialReload()
-        //self.tableView.reloadData()
+    }
+    
+    func trialForMedium(element: Int)
+    {
+        mediumPriorityFirebaseRef.getDocuments()
+            {
+            (docsSnapshot, err) in
+            if let err = err
+            {
+                print("error \(err)")
+            }
+            else
+            {
+                self.medPriority.removeAll()
+                for document in docsSnapshot!.documents
+                {
+                    if document["index"] as! Int == element
+                    {
+                        let temp = document.documentID
+                        self.mediumPriorityFirebaseRef.document(temp).delete()
+                        let removetThisElement = document["name"] as! String
+                        let ViewContollerB = ViewController()
+                        ViewContollerB.removeElementMed(remove: removetThisElement)
+                    }
+                    else if document["index"] as! Int > element
+                    {
+                        let documentID = document.documentID
+                        var tempValue = document["index"] as! Int
+                        tempValue-=1
+
+                        let everyDocument = self.mediumPriorityFirebaseRef.document(documentID)
+                        everyDocument.updateData(["index": tempValue])
+                    }
+                }
+            }
+            DispatchQueue.main.async
+                {
+                    self.folderView.reloadData()
+            }
+        }
+    }
+    
+    func trialForLow(element: Int)
+    {
+        lowPriorityFirebaseRef.getDocuments()
+            {
+            (docsSnapshot, err) in
+            if let err = err
+            {
+                print("error \(err)")
+            }
+            else
+            {
+                self.lowPriority.removeAll()
+                for document in docsSnapshot!.documents
+                {
+                    if document["index"] as! Int == element
+                    {
+                        let temp = document.documentID
+                        self.lowPriorityFirebaseRef.document(temp).delete()
+                       // self.highPriority.append(document["name"] as! String)
+                        let removetThisElement = document["name"] as! String
+                        let ViewContollerB = ViewController()
+                        ViewContollerB.removeElementLow(remove: removetThisElement)
+                    }
+                    else if document["index"] as! Int > element
+                    {
+                        let documentID = document.documentID
+                        var tempValue = document["index"] as! Int
+                        tempValue-=1
+
+                        let everyDocument = self.lowPriorityFirebaseRef.document(documentID)
+                        everyDocument.updateData(["index": tempValue])
+                    }
+                }
+            }
+            DispatchQueue.main.async
+                {
+                    self.folderView.reloadData()
+            }
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
@@ -149,6 +229,8 @@ class CategoryViewController: UIViewController, UITableViewDataSource, UITableVi
         
         foldersFirebaseRef = Firestore.firestore().collection("folders")
         highPriorityFirebaseRef = Firestore.firestore().collection("highPriorityTasks")
+        mediumPriorityFirebaseRef = Firestore.firestore().collection("mediumPriorityTasks")
+        lowPriorityFirebaseRef = Firestore.firestore().collection("lowPriorityTasks")
         trial()
         
         // Do any additional setup after loading the view.

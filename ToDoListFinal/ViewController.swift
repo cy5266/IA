@@ -217,11 +217,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         super.viewDidLoad()
         self.navigationController?.isToolbarHidden = false
         
-        //let btn: UIButton = UIButton(frame: CGRect(x: 100, y: 100, width: 30, height: 40))
         let btn: UIButton = UIButton()
         btn.backgroundColor = UIColor.white
         btn.setTitle("+", for: .normal)
-        btn.setTitleColor(UIColor.black, for: .normal)//https://stackoverflow.com/questions/2474289/how-can-i-change-uibutton-title-color
+        btn.setTitleColor(UIColor.black, for: .normal) //https://stackoverflow.com/questions/2474289/how-can-i-change-uibutton-title-color
         btn.titleLabel?.font =  UIFont.systemFont(ofSize: 35)
         btn.addTarget(self, action: #selector(performAddTaskSegue), for: .touchUpInside)
         
@@ -282,15 +281,35 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             }
             counter =  counter + 1
         }
-//        if !highPriorityTasks.isEmpty
-//        {
-//        self.tableView.reloadData() //theres nill here
-//        }
-//        else
-//        {
-//
-//        }
     }
+    
+    func removeElementMed(remove: String)
+       {
+           var counter = 0
+           for elements in mediumPriorityTasks
+           {
+               
+               if (elements.name == remove)
+               {
+           mediumPriorityTasks.remove(at: counter)
+               }
+               counter =  counter + 1
+           }
+       }
+    
+    func removeElementLow(remove: String)
+          {
+              var counter = 0
+              for elements in lowPriorityTasks
+              {
+                  
+                  if (elements.name == remove)
+                  {
+              lowPriorityTasks.remove(at: counter)
+                  }
+                  counter =  counter + 1
+              }
+          }
     
     override func viewWillAppear(_ animated:Bool)
     {
