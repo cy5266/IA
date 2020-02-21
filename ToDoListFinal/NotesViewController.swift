@@ -16,8 +16,6 @@ class NotesViewController: UIViewController
     var notesFirebaseRef: CollectionReference!
     var notesMediumFirebaseRef: CollectionReference!
     var notesLowFirebaseRef: CollectionReference!
-
-    var currentTask: TaskCell!
     
     var elementInHighPriority: Int = 0
     var elementInMediumPriority: Int = 0

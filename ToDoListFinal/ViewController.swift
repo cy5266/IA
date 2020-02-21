@@ -12,26 +12,23 @@ import FirebaseFirestore
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource
 {
+    //creates an object with two variables: sectionName and sectionContents
     struct Objects //https://www.youtube.com/watch?v=zFMSovtqqUc
     {
         var sectionName: String //names for the section headings in the tableview e.g. High Priority
         var sectionContents: [TaskCell]! //content in the cell (the tasks)
     }
  
-   // var highPriorityTasks: Array<TaskCell> = []
-    var highPriorityTasks = [TaskCell]()
-    var mediumPriorityTasks: Array<TaskCell> = []
-    var lowPriorityTasks: Array<TaskCell> = []
+    var highPriorityTasks = [TaskCell]() //creates an array of TaskCell objects
+    var mediumPriorityTasks: Array<TaskCell> = [] //creates an array of TaskCell objects
+    var lowPriorityTasks: Array<TaskCell> = [] //creates an array of TaskCell objects
     
-    var allTasks = [Objects]()
+    var allTasks = [Objects]() //creates an array of Objects that contain both sectionName and sectionContents
     
     var shouldSegue: Bool = false
-    var shouldDelete: Bool = false
     
     var elementIndex: Int = 0  //element user clicks on within a section
     var sectionIndex: Int = 0  //section user clicks on
-    
-    var tempElement: Int = 0
     
     var folderIndex: Int = 0 //folder index the user clicks on in the categoryivew
     
@@ -39,21 +36,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     var docIDforMedium: String = "" //docID from firebase for medium priority tasks
     var docIDforLow: String = ""
     
-    var clickEditButton = 0
-    
-    var message: Int = 0
-    
     var highPriorityFirebaseRef: CollectionReference!  //high priority firebase collection reference
     var mediumPriorityFirebaseRef: CollectionReference!   //medium priority firebase collection reference
     var lowPriorityFirebaseRef: CollectionReference! //low priority firebase collection reference
     
-  //  var isEditing: Bool {setEditing(true, animated: false)}
-    
     var notes: String = ""  //notes for the tasks
     
     @IBOutlet weak var tableView: UITableView! //https://stackoverflow.com/questions/33724190/ambiguous-reference-to-member-tableview
-    
-    @IBOutlet var deleteTask: UIBarButtonItem!
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int //creates number of rows in each section
     {
@@ -62,15 +51,15 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell  //detects the cells at a certain row
     {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "taskCell", for: indexPath) as! TaskCell
-        cell.labelOutlet.text = allTasks[indexPath.section].sectionContents[indexPath.row].name  //makes the cell text the task
+        let cell = tableView.dequeueReusableCell(withIdentifier: "taskCell", for: indexPath) as! TaskCell //lets the cell become the tableViewCell with identifier "taskCell"
+        cell.labelOutlet.text = allTasks[indexPath.section].sectionContents[indexPath.row].name  //makes the cell text the associated with the correct section, and row of the element
         return cell
         
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath)
     {
-        sectionIndex = indexPath.section
+        sectionIndex = indexPath.section //finds the index of the section, e.g. whether it's the first section (0), second section (1), or third (2)
          elementIndex = indexPath.row
         
         if editingStyle == UITableViewCell.EditingStyle.delete //https://www.youtube.com/watch?v=h7kasGi_1Tk
@@ -122,23 +111,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         performSegue(withIdentifier: "notesLink", sender: Any?.self)
         
         shouldSegue = false
-//        if tableView.cellForRow(at: indexPath)?.accessoryType == UITableViewCell.AccessoryType.checkmark
-//        { //https://www.youtube.com/watch?v=5MZ-WJuSdpg
-//
-//
-//
-//            tableView.cellForRow(at: indexPath)?.accessoryType = UITableViewCell.AccessoryType.none
-//
-//        }
-//        else
-//        {
-//            if (clickEditButton % 2 == 0)
-//            {
-//            tableView.cellForRow(at: indexPath)?.accessoryType = UITableViewCell.AccessoryType.checkmark
-//            }
-//        }
-//        tableView.deselectRow(at: indexPath, animated: true) //https://stackoverflow*.com/questions/33046573/why-do-my-uitableviewcells-turn-grey-when-i-tap-on-them/33046735
- 
     
     }
     
@@ -146,7 +118,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     {
         self.performSegue(withIdentifier: "addTaskLink", sender: self)
     }
-    
     
     
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool
@@ -164,19 +135,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         return allTasks[section].sectionName
     }
     
-    /*
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath)
-    {
-        if editingStyle == .delete
-        {
-            allTasks.remove(at: indexPath.row)
-            tableView.delete([indexPath])
-            loadTask()
-            self.tableView.reloadData()
-        }
-    }
- */
-  
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
     {
         if segue.identifier == "notesLink"
@@ -202,54 +160,41 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
 
     }
-
- 
-   
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool
     {
         return true
     }
  
-    
+    //
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        self.navigationController?.isToolbarHidden = false
+        self.navigationController?.isToolbarHidden = false //makes sure the navigationController is visible upon launch
         
-        let btn: UIButton = UIButton()
-        btn.backgroundColor = UIColor.white
-        btn.setTitle("+", for: .normal)
-        btn.setTitleColor(UIColor.black, for: .normal) //https://stackoverflow.com/questions/2474289/how-can-i-change-uibutton-title-color
-        btn.titleLabel?.font =  UIFont.systemFont(ofSize: 35)
-        btn.addTarget(self, action: #selector(performAddTaskSegue), for: .touchUpInside)
-        
-        let menuBarItem = UIBarButtonItem(customView: btn)
-        self.navigationItem.rightBarButtonItem = menuBarItem
-       
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-        
-        
-//       var items = [UIBarButtonItem]()
-//        let doneButton = UIButton()
-//        doneButton.setTitle("Done", for: .normal)
-//        doneButton.backgroundColor = UIColor.black
-//
-//        btn.setTitleColor(UIColor.black, for: .normal)
-//        doneButton.addTarget(self, action: #selector(folderDone), for: .touchUpInside)
-//        let barButton = UIBarButtonItem(customView: doneButton)
-//
-//        items.append(barButton)
-//        toolbarItems = items
-//
-        navigationController?.setNavigationBarHidden(false, animated: true)
-        
-        highPriorityFirebaseRef = Firestore.firestore().collection("highPriorityTasks")
-        mediumPriorityFirebaseRef = Firestore.firestore().collection("mediumPriorityTasks")
+        highPriorityFirebaseRef = Firestore.firestore().collection("highPriorityTasks") //sets the collection reference varaible highPriorityFirebaseRef with the collection named "highPriorityTasks" in Firebase
+        mediumPriorityFirebaseRef = Firestore.firestore().collection("mediumPriorityTasks") //sets the collection reference varaible mediumPriorityFirebaseRef with the collection named "mediumPriorityTasks" in Firebase
         lowPriorityFirebaseRef = Firestore.firestore().collection("lowPriorityTasks")
-        trial()
-        trialMedium()
-        trialForLow()
+            //sets the collection reference varaible lowPriorityFirebaseRef with the collection named "lowPriorityTasks" in Firebase
+        
+        getDocumentsHigh() //calls the method that retrieves data from the "highPriorityTasks" collection in Firebase
+        getDocumentsMedium() //calls the method that retrieves data from the "mediumPriorityTasks" collection in Firebase
+        getDocumentsLow() //calls the method that retrieves data from the "lowPriorityTasks" collection in Firebase
+        
+
+         let btn: UIButton = UIButton()
+         btn.backgroundColor = UIColor.white
+         btn.setTitle("+", for: .normal)
+         btn.setTitleColor(UIColor.black, for: .normal) //https://stackoverflow.com/questions/2474289/how-can-i-change-uibutton-title-color
+         btn.titleLabel?.font =  UIFont.systemFont(ofSize: 35)
+         btn.addTarget(self, action: #selector(performAddTaskSegue), for: .touchUpInside)
+         
+         let menuBarItem = UIBarButtonItem(customView: btn)
+         self.navigationItem.rightBarButtonItem = menuBarItem
+        
+         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+         
+         navigationController?.setNavigationBarHidden(false, animated: true)
         
    
         NotificationCenter.default.addObserver(self, selector: #selector(reloadList(_:)), name: NSNotification.Name("updateTableHighPriority"), object: nil) //creates the notification center named 'updateTable' and calls the function reloadList when it recieves the data
@@ -261,12 +206,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         self.tableView.reloadData()
         loadTask()
 
-    }
-
-    func trialForFolder(element: Int) -> Int
-    {
-        tempElement = element
-        return(tempElement)
     }
     
     func removeElementHigh(remove: String)
@@ -317,44 +256,33 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.reloadData()
     }
     
-    func trial()
+    func getDocumentsHigh()
     {
-    
-        highPriorityFirebaseRef.getDocuments()
+        highPriorityFirebaseRef.getDocuments() //"Get Data with Cloud Firestore." Firebase, firebase.google.com/docs/firestore/query-data/get-data. Accessed 20 Feb. 2020.
             {
             (docsSnapshot, err) in
             if let err = err
             {
-                print("error \(err)")
+                print("error \(err)") //print out the error recieved
             }
             else
             {
-                self.highPriorityTasks.removeAll()
-                for document in docsSnapshot!.documents
+                self.highPriorityTasks.removeAll()  //removes all of the elements currently in the higPriorityTasks array to make sure information will not be duplicated
+                for document in docsSnapshot!.documents //loops through all of the documents inside the collection highPrirorityTasks in Firebase
                 {
-            
-                    
                     let newTask = TaskCell() //access TaskCell class
-                    newTask.name = document["name"] as! String
-                    /*https://stackoverflow.com/questions/47743458/swift-firestore-get-document-id*/
-                    newTask.documentID = document.documentID
-                   
-                    let tempFolderIndex = document["index"] as! Int //bascially seeing which folder the user chose to add tasks into
+                    newTask.name = document["name"] as! String //sets the name of the taskCell as the String value of the field "name" in the document
                     
-                    if(tempFolderIndex == self.folderIndex) //if the folder the task is from equals to the folder the user clicked
-                    {
-                    self.highPriorityTasks.append(newTask)
+                    newTask.documentID = document.documentID //sets the int value representing the documentID as the document's ID //https://stackoverflow.com/questions/47743458/swift-firestore-get-document-id
                    
+                    let tempFolderIndex = document["index"] as! Int //sets a temporary variable as the value of integer value of the field "index" in the document to see which the user chose to add task into
+                    
+                    if(tempFolderIndex == self.folderIndex) //if the folder the task is from the folder the user clicked into
+                    {
+                    self.highPriorityTasks.append(newTask) //add the task into the Array
                     }
-
-//                    if ((document["index"] as! Int == tempFolderIndex) && self.shouldDelete)
-//                    {
-//                        self.highPriorityFirebaseRef.document(document.documentID).delete()
-//                        self.shouldDelete = false
-//                    }
-
-                    self.loadTask()
-                    self.tableView.reloadData()
+                    self.loadTask() //reload all of the tasks available to the user
+                    self.tableView.reloadData() //reload the tableView to display the new data
                 }
                 
             }
@@ -364,48 +292,20 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             self.tableView.reloadData()
             }
         }
-    
-
-        // trialReload()
-        //self.tableView.reloadData()
     }
  
     
     @objc func reloadList(_ notification: NSNotification) //load data here
     {
-        /*
-        if let info = notification.userInfo as NSDictionary? //sets a variable as the information from the dictionary recieved from the Notification
-        {
-            if let stringFromUser = info["task"] as? String //sets a variable as the information from the key 'task'
-            {
-                highPriorityTasks.append(stringFromUser) //adds the string from user into the array
-            }
-        }
-        */
-        
-        trial()
+        getDocumentsHigh()
+    }
 
-    }
-    
-    /*
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?)
-    {
-      
-    
-    let trial = segue.destination as! NotesViewController //sets the destination as View Controller
-    
-   // something.taskName = self.task //passes the variable to the variable in View Controller
-        trial.indexReference = tableView as! Int
-    }
-    
-    */
-    
     @objc func reloadListforMedium(_ notification: NSNotification)
     {
-        trialMedium()
+        getDocumentsMedium()
     }
     
-    func trialMedium()
+    func getDocumentsMedium()
     {
         mediumPriorityFirebaseRef.getDocuments()
             {
@@ -419,27 +319,18 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 self.mediumPriorityTasks.removeAll()
                 for document in docsSnapshot!.documents
                 {
-                    
                     let newTask = TaskCell() //access TaskCell class
                     newTask.name = document["name"] as! String
-                    /*https://stackoverflow.com/questions/47743458/swift-firestore-get-document-id*/
                     newTask.documentID = document.documentID
-                  //  newTask.update()
-                    
-                    let tempFolderIndex = document["index"] as! Int //bascially seeing which folder the user chose to add tasks into
-                    
-                    
-                    if(tempFolderIndex == self.folderIndex) //if the folder the task is from equals to the folder the user clicked
+                    let tempFolderIndex = document["index"] as! Int
+                    if(tempFolderIndex == self.folderIndex)
                     {
                     self.mediumPriorityTasks.append(newTask)
                     }
-                    
                     self.loadTask()
                     self.tableView.reloadData()
                 }
-                
             }
-            
             DispatchQueue.main.async
                 {
             self.tableView.reloadData()
@@ -449,10 +340,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     @objc func reloadListforLow(_ notification: NSNotification)
     {
-        trialForLow()
+        getDocumentsLow()
     }
     
-    func trialForLow()
+    func getDocumentsLow()
     {
         lowPriorityFirebaseRef.getDocuments()
             {
@@ -471,11 +362,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                     newTask.name = document["name"] as! String
                     /*https://stackoverflow.com/questions/47743458/swift-firestore-get-document-id*/
                     newTask.documentID = document.documentID
-                  //  newTask.update()
                     
                     let tempFolderIndex = document["index"] as! Int //bascially seeing which folder the user chose to add tasks into
-                    
-                    
                     if(tempFolderIndex == self.folderIndex) //if the folder the task is from equals to the folder the user clicked
                     {
                     self.lowPriorityTasks.append(newTask)
@@ -495,9 +383,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         self.tableView.reloadData() //redisplays everything in the array
     }
     
-    func loadTask()
+    func loadTask() //loads all of the information that needs to be displayed in the tableView
     {
-        allTasks = [Objects(sectionName: "High Priority", sectionContents: highPriorityTasks), Objects(sectionName: "Medium Priority", sectionContents: mediumPriorityTasks), Objects(sectionName: "Low Priority", sectionContents: lowPriorityTasks)]
+        allTasks = [Objects(sectionName: "High Priority", sectionContents: highPriorityTasks), Objects(sectionName: "Medium Priority", sectionContents: mediumPriorityTasks), Objects(sectionName: "Low Priority", sectionContents: lowPriorityTasks)] //this array contains 3 elements, but within each element there is seperate object that contains a String and an array containing all of the elements within that section
     }
     
     

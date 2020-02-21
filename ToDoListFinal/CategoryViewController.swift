@@ -27,28 +27,23 @@ class CategoryViewController: UIViewController, UITableViewDataSource, UITableVi
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-       // return allFolders.count
         return allFolders.count
        
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-       // let cell = tableView.dequeueReusableCell(withIdentifier: "FolderCell", for: indexPath) as! folderCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
+    {
+        let cell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "cell") //accesses the correct cell by checking its identifier
         
-        let cell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "cell")
-        
-        cell.textLabel?.text = allFolders[indexPath.row].name
+        cell.textLabel?.text = allFolders[indexPath.row].name //sets the text in the cell as the element in allFolder's name
         return cell
     }
     
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
-         //performSegue(withIdentifier: "folderMainLink", sender: Any?.self)
-        //self.performSegue(withIdentifier: "folderMainLink", sender: Any?.self)
-     
-        
-        elementIndexForFolder = indexPath.row
-        
+
+            elementIndexForFolder = indexPath.row
            performSegue(withIdentifier: "folderMainLink", sender: Any?.self)
     }
     
@@ -59,25 +54,18 @@ class CategoryViewController: UIViewController, UITableViewDataSource, UITableVi
                
                if editingStyle == UITableViewCell.EditingStyle.delete //https://www.youtube.com/watch?v=h7kasGi_1Tk
                {
-               let docIDforFolder = allFolders[elementIndex].documentID
-               allFolders.remove(at: elementIndex)
-               foldersFirebaseRef.document(docIDforFolder).delete()
-//                if(elementIndex == 0)
-//                {
-                    trialForHigh(element: elementIndex)
-                //}
-//                else if(elementIndex == 1)
-//                {
-                    trialForMedium(element: elementIndex)
-//                }
-//                else if (elementIndex == 2)
-//                {
-                    trialForLow(element: elementIndex)
-//                }
-               viewDidLoad()
+                    let docIDforFolder = allFolders[elementIndex].documentID
+                    allFolders.remove(at: elementIndex)
+                    foldersFirebaseRef.document(docIDforFolder).delete()
                 
+                    trialForHigh(element: elementIndex)
+                    trialForMedium(element: elementIndex)
+                    trialForLow(element: elementIndex)
+                
+                    viewDidLoad()
               }
     }
+    
     
     func trialForHigh(element: Int)
     {
@@ -97,7 +85,6 @@ class CategoryViewController: UIViewController, UITableViewDataSource, UITableVi
                     {
                         let temp = document.documentID
                         self.highPriorityFirebaseRef.document(temp).delete()
-                       // self.highPriority.append(document["name"] as! String)
                         let removetThisElement = document["name"] as! String
                         let ViewContollerB = ViewController()
                         ViewContollerB.removeElementHigh(remove: removetThisElement)
@@ -178,7 +165,6 @@ class CategoryViewController: UIViewController, UITableViewDataSource, UITableVi
                     {
                         let temp = document.documentID
                         self.lowPriorityFirebaseRef.document(temp).delete()
-                       // self.highPriority.append(document["name"] as! String)
                         let removetThisElement = document["name"] as! String
                         let ViewContollerB = ViewController()
                         ViewContollerB.removeElementLow(remove: removetThisElement)
@@ -231,36 +217,31 @@ class CategoryViewController: UIViewController, UITableViewDataSource, UITableVi
         highPriorityFirebaseRef = Firestore.firestore().collection("highPriorityTasks")
         mediumPriorityFirebaseRef = Firestore.firestore().collection("mediumPriorityTasks")
         lowPriorityFirebaseRef = Firestore.firestore().collection("lowPriorityTasks")
-        trial()
-        
-        // Do any additional setup after loading the view.
+        getFolders()
     }
     
-    func trial()
+    func getFolders() //function retrieves all of the folders from Firebase
     {
-        foldersFirebaseRef.getDocuments()
+        foldersFirebaseRef.getDocuments() //accesses the collection "folders" in Firebase and gets all of the documents within that collection
             {
             (docsSnapshot, err) in
-            if let err = err
+            if let err = err //checks for an error
             {
-                print("error \(err)")
+                print("error \(err)") //prints out the error
             }
             else
             {
                 self.allFolders.removeAll()
-                for document in docsSnapshot!.documents
+                for document in docsSnapshot!.documents //loops through each document within the collection individually
                 {
                     
                     let newFolderCell = folderCell() //access folderCell class
-                    newFolderCell.name = document["title"] as! String
-                    newFolderCell.documentID = document.documentID
+                    newFolderCell.name = document["title"] as! String //sets the name of the folder to the data inside the document field "title"
+                    newFolderCell.documentID = document.documentID //sets the string value of the document ID as the document's ID
                     /*https://stackoverflow.com/questions/47743458/swift-firestore-get-document-id*/
+                    self.allFolders.append(newFolderCell) //adds the folder into the Array of total folders /*https://stackoverflow.com/questions/47743458/swift-firestore-get-document-id*/
                     
-                    self.allFolders.append(newFolderCell)
-
-                    /*https://stackoverflow.com/questions/47743458/swift-firestore-get-document-id*/
-                    
-                    self.folderView.reloadData()
+                    self.folderView.reloadData() //reload the data displayed to the user
                 }
                 
             }
@@ -270,8 +251,6 @@ class CategoryViewController: UIViewController, UITableViewDataSource, UITableVi
                     self.folderView.reloadData()
             }
         }
-        // trialReload()
-        //self.tableView.reloadData()
     }
     
    @objc func reloadFolders(_ notification: NSNotification)
@@ -280,7 +259,7 @@ class CategoryViewController: UIViewController, UITableViewDataSource, UITableVi
         {
             if let stringFromUser = info["folderName"] as? String //sets a variable as the information from the key 'task'
             {
-                trial()
+                getFolders()
                 self.folderView.reloadData()
         }
     }

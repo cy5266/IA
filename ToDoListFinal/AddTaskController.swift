@@ -25,26 +25,24 @@ class AddTaskController: UIViewController {
     var unclickMediumPriority = 0
     var unclickLowPriority = 0
 
-    var highPriorityFirebaseRef2: CollectionReference!
-    var mediumPriorityFirebaseRef2: CollectionReference!
-    var lowPriorityFirebaseRef2: CollectionReference!
+    var highPriorityFirebaseRef2: CollectionReference!  //high priority firebase collection reference
+    var mediumPriorityFirebaseRef2: CollectionReference! //medium priority firebase collection reference
+    var lowPriorityFirebaseRef2: CollectionReference! //low priority firebase collection reference
     
     var folderIndex: Int = 0
     
     @IBOutlet weak var labelText: UILabel!
     
-    @IBAction func addTask(_ sender: Any)
+    @IBAction func addTask(_ sender: Any) //responds to the action of clicking the 'Add' button in the AddTaskController
     {
-        print(folderIndex)
-        if let task = taskAdd.text, !task.isEmpty
+        if let task = taskAdd.text, !task.isEmpty //makes sure the user entered a string
         {
-            let userInput: [String: String] = ["task" : task] //putting the user input into a dictorionary with the key 'task'
+            let userInput: [String: String] = ["task" : task] //puts the user input into a dictorionary with the key 'task'
             
             if clickedHighPriority
             {
-                highPriorityFirebaseRef2.addDocument(data: ["name": task, "index": folderIndex])
-               // highPriorityFirebaseRef2.addDocument(data: ["name": task, "notes": ]) //if you want to add more than one field at a time
-            
+                highPriorityFirebaseRef2.addDocument(data: ["name": task, "index": folderIndex]) //adds a documents with the name the task name the user inputted, and index based on the index of the folder they chose to add the task in
+                
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: "updateTableHighPriority"), object: nil, userInfo: userInput) //uses notification and calls the notification center made in ViewController called 'updateTable' and sends in the dictionary userInput
                 
                 returnToViewController()
@@ -128,7 +126,8 @@ class AddTaskController: UIViewController {
         navigationController?.popViewController(animated: true) //brings it back to the ViewController page
     }
     
-    override func viewDidLoad() {
+    override func viewDidLoad()
+    {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         highPriorityFirebaseRef2 = Firestore.firestore().collection("highPriorityTasks")
