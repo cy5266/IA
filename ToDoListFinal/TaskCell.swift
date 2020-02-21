@@ -9,18 +9,16 @@
 import UIKit
 import Firebase
 
-class TaskCell: UITableViewCell {
-    
-    
-   // @IBOutlet weak var checkBoxOutlet: UIButton! //need to redrag later
+class TaskCell: UITableViewCell
+{
     
     @IBOutlet weak var labelOutlet: UILabel!
     
-    var name: String = ""
+    var name: String = "" //name of Task
     
-    var notes: String = ""
+    var notes: String = "" //notes associated with the Task
     
-    var documentID: String = ""
+    var documentID: String = "" //documentID of the Task
     
 
     func update()

@@ -13,7 +13,7 @@ import FirebaseFirestore
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource
 {
     //creates an object with two variables: sectionName and sectionContents
-    struct Objects //https://www.youtube.com/watch?v=zFMSovtqqUc
+    struct Objects //"Sections in Table View! (Swift in Xcode)." YouTube, 18 June 2015,www.youtube.com/watch?v=zFMSovtqqUc. Accessed 21 Feb. 2020.
     {
         var sectionName: String //names for the section headings in the tableview e.g. High Priority
         var sectionContents: [TaskCell]! //content in the cell (the tasks)
@@ -66,7 +66,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         {
             if (sectionIndex == 0) //delete high priority tasks
             {
-                docID = highPriorityTasks[elementIndex].documentID
+                docID = highPriorityTasks[elementIndex].documentID //sets the docID variable as the document ID of the element in highPriorityTasks
                 highPriorityTasks.remove(at: elementIndex)
                 print(highPriorityTasks)
                 highPriorityFirebaseRef.document(docID).delete() //https://stackoverflow.com/questions/57943765/swift-firestore-delete-document

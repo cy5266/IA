@@ -15,15 +15,15 @@ class CategoryViewController: UIViewController, UITableViewDataSource, UITableVi
     
     @IBOutlet var folderView: UITableView!
     
-    var allFolders = [folderCell]()
-    var highPriority = [String]()
-    var medPriority = [String]()
-    var lowPriority = [String]()
+    var allFolders = [folderCell]() //creates an array of folderCells
+    var highPriority = [String]() //creates an array of strings
+    var medPriority = [String]()//creates an array of strings
+    var lowPriority = [String]()//creates an array of strings
     var elementIndexForFolder: Int = 0
-    var foldersFirebaseRef: CollectionReference!
-    var highPriorityFirebaseRef: CollectionReference!
-    var mediumPriorityFirebaseRef: CollectionReference!
-    var lowPriorityFirebaseRef: CollectionReference!
+    var foldersFirebaseRef: CollectionReference! //collectionReference to Firebase
+    var highPriorityFirebaseRef: CollectionReference!//collectionReference to Firebase
+    var mediumPriorityFirebaseRef: CollectionReference!//collectionReference to Firebase
+    var lowPriorityFirebaseRef: CollectionReference!//collectionReference to Firebase
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
